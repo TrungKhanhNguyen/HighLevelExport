@@ -1,6 +1,7 @@
 ﻿using HighLevelExport.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ namespace HighLevelExport.Helper
         public double getUnixTimeByDate(DateTime date)
         {
             var timeSpan = (date - new DateTime(1970, 1, 1, 0, 0, 0));
-            return timeSpan.TotalSeconds;
+            return (timeSpan.TotalSeconds / 1);
         }
 
         public string getDecodedSMSFromUrl(string url)
@@ -68,8 +69,14 @@ namespace HighLevelExport.Helper
             }
             return sms;
         }
+        public string getHI3FilenameFromUrl(string url)
+        {
+            string filePath = "";
+            var subUrl = url.Replace("/",@"\");
+            var indexOfLastClose = subUrl.LastIndexOf(@"\");
+            filePath = subUrl.Substring(indexOfLastClose + 1);
+            return filePath;
+        }
 
-
-        
     }
 }

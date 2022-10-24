@@ -40,47 +40,50 @@ namespace HighLevelExport
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            //timer1.Start();
-            //var currentTime = DateTime.Now;
-            //var startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, currentTime.Hour, 0, 0);
-            //var endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, currentTime.Hour, 10, 0);
-
-            //if(currentTime >= startTime && currentTime <=endTime)
-            //{
-
-            //}
             exportData();
-            //writeDataToFile();
-            var source = "ftp://172.2.10.22/NAS/contentvmc/84785696789/2022-09-21/202209210221/1/target/TELEPHONY/3d99258e-28a1-4158-9940-53592bd27a3c";
-            var dess = @"C:\Work\export\3d99258e-28a1-4158-9940-53592bd27a3c";
-            
-
         }
 
         private void exportData()
         {
             listTarget = db.ExportTargets.ToList();
-            connection = new MySqlConnection(connectionString);
             var tempListExportObject = new List<ExportObject>();
             var currentTime = new DateTime(2022,09,15,07,00,00);
+            var startTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).ToString("yyyy-MM-ddTHH:mm:ssZ");
+            var endTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).AddHours(3).ToString("yyyy-MM-ddTHH:mm:ssZ");
+            var logExportTime = startTime + " - " + endTime;
+            var startTimeWrite = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).ToString("yyyy-MM-dd-HH.mm");
+            var tempListExportObject2 = new List<ExportObject>();
             try
             {
-                connection.Open();
-                var cmd = helper.getIntellegoCaseAndId(connection, listTarget);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                while (rdr.Read())
+                //Phần truy vấn thông tin list InterceptId&InterceptName by CaseName
+                try
                 {
-                    var tempObj = new ExportObject
+                    using (MySqlConnection connection = new MySqlConnection(connectionString))
                     {
-                        CaseName = rdr.GetString(0),
-                        InterceptName = rdr.GetString(1),
-                        InterceptId = rdr.GetString(2)
-                    };
-                    tempListExportObject.Add(tempObj);
+                        connection.Open();
+                        using (MySqlCommand cmd = helper.getIntellegoCaseAndId(connection, listTarget))
+                        {
+                            using (MySqlDataReader rdr = cmd.ExecuteReader())
+                            {
+                                while (rdr.Read())
+                                {
+                                    var tempObj = new ExportObject
+                                    {
+                                        CaseName = rdr.GetString(0),
+                                        InterceptName = rdr.GetString(1),
+                                        InterceptId = rdr.GetString(2)
+                                    };
+                                    tempListExportObject.Add(tempObj);
+                                }
+                            }
+                        }
+                    }
                 }
-                connection.Close();
-
-
+                catch(Exception ex1) {
+                    var message = "Exception when retrive list InterceptId&InterceptName By CaseName: " + ex1.Message;
+                    txtMultiLog.Text += Environment.NewLine + message;
+                    helper.InsertLogToDB(message, StatusInfo.Failed.ToString(),logExportTime,"",DateTime.Now,"","");
+                }
                 /****Phần truy vấn Elastic****/
                 var nodes = new Uri[]
                         {
@@ -90,22 +93,16 @@ namespace HighLevelExport
                 var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming();
                 //var elasticClient = new ElasticClient(connectionSettings);
                 var elasticClient = new ElasticClient(connectionSettings.DefaultIndex("intellego"));
-
-                var tempListExportObject2 = new List<ExportObject>();
-                var startTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).ToString("yyyy-MM-ddTHH:mm:ssZ");
-                var endTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).AddHours(3).ToString("yyyy-MM-ddTHH:mm:ssZ");
+                
                 foreach (var interceptItem in tempListExportObject)
                 {
                     try
                     {
                         var tempQuery = helper.getElasticQuery(interceptItem.InterceptId, startTime, endTime);
-
                         var searchResult = elasticClient.LowLevel.Search<SearchResponse<ElasticObject>>(tempQuery);
                         var kkk = searchResult.Total;
                         foreach (var item in searchResult.Hits)
                         {
-                            //var articleIds = item.Id;
-                            //var source = item.Source;
                             var eventDate = item.Fields["eventDate"].As<DateTime[]>().First();
                             var tempObj = new ExportObject
                             {
@@ -118,26 +115,23 @@ namespace HighLevelExport
                             tempListExportObject2.Add(tempObj);
                         }
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        var message = "Exception on InterceptName= " + interceptItem.InterceptName + ", InterceptId= " + interceptItem.InterceptId;
+                        var message = "Exception when retrive elasticId: " + interceptItem.InterceptId + " " + ex.Message;
                         txtMultiLog.Text += Environment.NewLine + message;
-                        helper.InsertLogToDB(message, StatusInfo.Failed.ToString());
+                        helper.InsertLogToDB(message, StatusInfo.Failed.ToString(),logExportTime,interceptItem.CaseName,DateTime.Now,interceptItem.InterceptId, interceptItem.InterceptName);
                     }
                     
                 }
-                //var sdd = tempListExportObject2;
-                /****Kết thúc truy vấn Elastic****/
 
                 /****Phần truy vấn MySQL theo type****/
                 var tempListExportObjectMySQL2 = new List<ExportObject>();
                 try
                 {
-                    //var cmd = helper.getIntellegoCaseAndId(connection, listTarget);
                     using (MySqlConnection connection = new MySqlConnection(connectionString))
                     {
                         connection.Open();
-                        //var listExecutedItem = new List<ExportObject>();
+                        //Phần lấy thông tin Location Update
                         using (MySqlCommand cmd2 = helper.getLocationUpdateInterceptInfo(connection, tempListExportObject2))
                         {
                             
@@ -165,7 +159,6 @@ namespace HighLevelExport
                                             {
                                                 stringFromMCC = stringFromMCC.Remove(indexofzero);
                                             }
-                                            
                                         }
                                         tempItem.celltower_cellid = stringFromMCC;
                                         tempListExportObjectMySQL2.Add(tempItem);
@@ -174,6 +167,8 @@ namespace HighLevelExport
                                 }
                             }
                         }
+
+                        //Phần lấy thông tin SMS
                         foreach (var item in tempListExportObject2)
                         {
                             if (tempListExportObjectMySQL2.IndexOf(item) == -1)
@@ -229,12 +224,10 @@ namespace HighLevelExport
                                         }
                                     }
                                 }
-                                catch (Exception ex) { helper.InsertLogToDB(ex.Message, StatusInfo.Failed.ToString()); }
+                                catch (Exception ex) { helper.InsertLogToDB(ex.Message, StatusInfo.Failed.ToString(),logExportTime,item.CaseName,DateTime.Now,item.InterceptId,item.InterceptName); }
                             }
-
-
                         }
-
+                        //Phần lấy thông tin Call
                         foreach(var item in tempListExportObject2)
                         {
                             if (tempListExportObjectMySQL2.IndexOf(item) == -1)
@@ -249,27 +242,35 @@ namespace HighLevelExport
                                             {
                                                 if (callRdr.HasRows)
                                                 {
-                                                    int directionIndex = tempRdr.GetOrdinal("direction");
-                                                    int urlIndex = tempRdr.GetOrdinal("url");
+                                                    int directionIndex = callRdr.GetOrdinal("direction");
+                                                    int urlIndex = callRdr.GetOrdinal("url");
                                                     //int metadataIndex = tempRdr.GetOrdinal("metadata");
-                                                    int imeiIndex = tempRdr.GetOrdinal("imei");
-                                                    int imsiIndex = tempRdr.GetOrdinal("imsi");
+                                                    int imeiIndex = callRdr.GetOrdinal("imei");
+                                                    int imsiIndex = callRdr.GetOrdinal("imsi");
 
-                                                    int callerIndex = tempRdr.GetOrdinal("caller");
-                                                    int calleeIndex = tempRdr.GetOrdinal("callee");
+                                                    int callerIndex = callRdr.GetOrdinal("caller");
+                                                    int calleeIndex = callRdr.GetOrdinal("callee");
 
-                                                    var calldirection = tempRdr.IsDBNull(directionIndex) ? string.Empty : tempRdr.GetString(directionIndex);
-                                                    //var metadata = tempRdr.IsDBNull(metadataIndex) ? string.Empty : tempRdr.GetString(metadataIndex);
-                                                    var imei = tempRdr.IsDBNull(imeiIndex) ? string.Empty : tempRdr.GetString(imeiIndex);
-                                                    var imsi = tempRdr.IsDBNull(imsiIndex) ? string.Empty : tempRdr.GetString(imsiIndex);
-                                                    var url = tempRdr.IsDBNull(urlIndex) ? string.Empty : tempRdr.GetString(urlIndex);
+                                                    int startTimeIndex = callRdr.GetOrdinal("startTime");
+                                                    int endTimeIndex = callRdr.GetOrdinal("endTime");
 
-                                                    var caller = tempRdr.IsDBNull(callerIndex) ? string.Empty : tempRdr.GetString(callerIndex);
-                                                    var callee = tempRdr.IsDBNull(calleeIndex) ? string.Empty : tempRdr.GetString(calleeIndex);
+                                                    int conversationDurationIndex = callRdr.GetOrdinal("conversationDuration");
 
-                                                    var docid = tempRdr.GetString(0);
-                                                    var doctype = tempRdr.GetString(1);
-                                                    var callType = tempRdr.GetString(7);
+                                                    var calldirection = callRdr.IsDBNull(directionIndex) ? string.Empty : callRdr.GetString(directionIndex);
+                                                    var imei = callRdr.IsDBNull(imeiIndex) ? string.Empty : callRdr.GetString(imeiIndex);
+                                                    var imsi = callRdr.IsDBNull(imsiIndex) ? string.Empty : callRdr.GetString(imsiIndex);
+                                                    var url = callRdr.IsDBNull(urlIndex) ? string.Empty : callRdr.GetString(urlIndex);
+
+                                                    var caller = callRdr.IsDBNull(callerIndex) ? string.Empty : callRdr.GetString(callerIndex);
+                                                    var callee = callRdr.IsDBNull(calleeIndex) ? string.Empty : callRdr.GetString(calleeIndex);
+
+                                                    var tempstartTime = callRdr.GetDateTime(startTimeIndex);
+                                                    var tempendTime =  callRdr.GetDateTime(endTimeIndex);
+                                                    var conversationDuration = callRdr.GetString(conversationDurationIndex);
+
+                                                    var docid = callRdr.GetString(0);
+                                                    var doctype = callRdr.GetString(1);
+                                                    var callType = callRdr.GetString(7);
 
                                                     var tempItem = tempListExportObject2.Where(m => m.elasticId == docid).FirstOrDefault();
                                                     tempItem.document_type = doctype;
@@ -283,17 +284,21 @@ namespace HighLevelExport
                                                     tempItem.call_caller = caller;
                                                     tempItem.call_callee = callee;
 
+                                                    tempItem.call_startTime = tempstartTime;
+                                                    tempItem.call_endTime = tempendTime;
+                                                    tempItem.call_conversationDuration = conversationDuration;
+
                                                     tempListExportObjectMySQL2.Add(tempItem);
                                                 }
                                             }
                                         }
                                     }
                                 }
-                                catch (Exception ex) { helper.InsertLogToDB(ex.Message, StatusInfo.Failed.ToString()); }
+                                catch (Exception ex) { helper.InsertLogToDB(ex.Message, StatusInfo.Failed.ToString(), logExportTime, item.CaseName, DateTime.Now, item.InterceptId, item.InterceptName); }
                             }
                         }
 
-                        /****Phần truy vấn MySQL Call_location****/
+                        /****Phần truy vấn Call_location cho SMS và Call****/
                         var listSMSAndCallItem = tempListExportObjectMySQL2.Where(m => m.document_type == "6").ToList();
                         if(listSMSAndCallItem.Count > 0)
                         {
@@ -326,109 +331,143 @@ namespace HighLevelExport
                                 }
                             }
                         }
-
-                        
-
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-
+                    var message = "Exception when retrive InterceptInfo by type, " + ex.Message;
+                    txtMultiLog.Text += Environment.NewLine + message;
+                    helper.InsertLogToDB(message, StatusInfo.Failed.ToString(), logExportTime, "", DateTime.Now, "", "");
                 }
-
-                /****Kết thúc phần truy vấn MySQL theo type****/
 
                 /****Phần truy vấn MySQL BSA****/
                 var finalExportList = tempListExportObjectMySQL2;
                 var listLocationObj = new List<ExportObject>();
-                
-                string BSAConnectionString = helper.getBSAConnectionString();
-                using (MySqlConnection connection2 = new MySqlConnection(BSAConnectionString))
+                try
                 {
-                    using (MySqlCommand cmd3 = helper.getCellTowerByCellId(connection2, tempListExportObjectMySQL2))
+                    string BSAConnectionString = helper.getBSAConnectionString();
+                    using (MySqlConnection connection2 = new MySqlConnection(BSAConnectionString))
                     {
-                        connection2.Open();
-                        using (MySqlDataReader reader = cmd3.ExecuteReader())
+                        using (MySqlCommand cmd3 = helper.getCellTowerByCellId(connection2, tempListExportObjectMySQL2))
                         {
-                            while (reader.Read())
+                            connection2.Open();
+                            using (MySqlDataReader reader = cmd3.ExecuteReader())
                             {
-                                if (reader.HasRows)
+                                while (reader.Read())
                                 {
-                                    var cellid = reader.GetString(0);
-                                    var address = reader.GetString(1);
-                                    var latlong = reader.GetString(2);
-                                    foreach (var item in finalExportList)
+                                    if (reader.HasRows)
                                     {
-                                        if (item.document_type == "19")
+                                        var cellid = reader.GetString(0);
+                                        var address = reader.GetString(1);
+                                        var latlong = reader.GetString(2);
+                                        foreach (var item in finalExportList)
                                         {
-                                            
+                                            if (item.document_type == "19")
+                                            {
+                                                if (item.celltower_cellid == cellid)
+                                                {
+                                                    item.celltower_address = address;
+                                                    item.celltower_latlong = latlong;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var tempListCGI = item.listCGI.Where(m => m.value == cellid).ToList();
+                                                if (tempListCGI.Count() > 0)
+                                                {
+                                                    var tempItemCGI = tempListCGI[0];
+                                                    tempItemCGI.address = address;
+                                                    tempItemCGI.latlon = latlong;
+                                                }
+                                            }
                                         }
-                                    }
-                                    //var tempObj = finalExportList.Where(m=>m.listCGI. .IndexOf(cellid) >=0).fir
 
-                                    finalExportList.Where(w => w.celltower_cellid == cellid).ToList().ForEach(s => s.celltower_address = address);
-                                    finalExportList.Where(w => w.celltower_cellid == cellid).ToList().ForEach(s => s.celltower_latlong = latlong);
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                catch(Exception ex)
+                {
+                    var message = "Exception when retrive BSA info, " + ex.Message;
+                    txtMultiLog.Text += Environment.NewLine + message;
+                    helper.InsertLogToDB(message, StatusInfo.Failed.ToString(), logExportTime, "", DateTime.Now, "", "");
+                }
+                
 
                 /****Phần ghi dữ liệu ra file****/
-
-                /****Kết thúc phần ghi dữ liệu ra file****/
-                var cmda = finalExportList;
-                WriteFile(finalExportList);
+                var finalListByEventDate = finalExportList.OrderBy(m=>m.eventDate).ToList();
+                WriteFile(finalListByEventDate,startTimeWrite);
             }
             /****Kết thúc phần truy vấn MySQL BSA****/
             catch (Exception ex)
             {
                 var message = "Unhandled error: " + ex.Message;
                 txtMultiLog.Text += Environment.NewLine + message;
-                helper.InsertLogToDB(message,StatusInfo.Failed.ToString());
-                connection.Close();
+                helper.InsertLogToDB(message,StatusInfo.Failed.ToString(),logExportTime,"",DateTime.Now,"","");
+                //connection.Close();
             }
         }
 
-        private void WriteFile(List<ExportObject> listExport)
+        private void WriteFile(List<ExportObject> listExport, string startTime)
         {
-            string initialData = "const dataHI2 = [";
-            foreach(var item in listExport)
+            var listByCaseName = listExport.Select(m => m.CaseName).Distinct();
+            foreach(var item in listByCaseName)
             {
-                if(item.document_type == "19")
+                var listItemExport = listExport.Where(m => m.CaseName == item).OrderByDescending(m=>m.eventDate).ToList();
+                
+                foreach (var itemExport in listItemExport)
                 {
-                    initialData += getLocationJsonString(item) +",";
-                }
-                else
-                {
-                    initialData += getSMSJsonString(item) + ",";
-                }
-            }
-            initialData += "]";
-            var indexOfCloseCharacter = initialData.LastIndexOf(']');
-            var indexOfLastComma = initialData.LastIndexOf(',');
-            if (indexOfCloseCharacter > -1)
-            {
-                if ((indexOfLastComma + 1) == indexOfCloseCharacter)
-                {
-                    initialData = initialData.Remove(indexOfCloseCharacter - 1, 1);
-                }
+                    string initialData = "const dataHI2 = [";
+                    var destinationPath = StaticKey.EXPORT_FOLDER + @"\" + itemExport.CaseName + @"\" + startTime + @"\" + itemExport.InterceptName;
+                    var hi2FullPath = destinationPath + @"\HI2.js";
+                    Directory.CreateDirectory(destinationPath);
 
+                    if (itemExport.document_type == "19")
+                    {
+                        initialData += getLocationJsonString(itemExport) + ",";
+                    }
+                    else
+                    {
+                        if (itemExport.call_type == "4")
+                        {
+                            initialData += getSMSJsonString(itemExport) + ",";
+                        }
+                        else
+                        {
+                            initialData += getCallJsonString(itemExport,destinationPath) + ",";
+                        }
+
+                    }
+                    initialData += "]";
+                    var indexOfCloseCharacter = initialData.LastIndexOf(']');
+                    var indexOfLastComma = initialData.LastIndexOf(',');
+                    if (indexOfCloseCharacter > -1)
+                    {
+                        if ((indexOfLastComma + 1) == indexOfCloseCharacter)
+                        {
+                            initialData = initialData.Remove(indexOfCloseCharacter - 1, 1);
+                        }
+                    }
+                    System.IO.File.WriteAllText(hi2FullPath, initialData);
+                }
+                
             }
-            System.IO.File.WriteAllText(@"C:\Work\export\HI2.js", initialData);
         }
 
 
         private void btnStop_Click(object sender, EventArgs e)
         {
 
-            var sd = "452-01-13623-0\0\0\0";
-            var indexof = sd.IndexOf('\0');
-            if(indexof != -1)
-            {
-                var sddsd = sd.Remove(indexof);
-            }
-           
+            //var sd = "452-01-13623-0\0\0\0";
+            //var indexof = sd.IndexOf('\0');
+            //if(indexof != -1)
+            //{
+            //    var sddsd = sd.Remove(indexof);
+            //}
+            var destinationPath = @"C:\Work\export\test_export\84956123654";
+            Directory.CreateDirectory(destinationPath);
             //write string to file
             //System.IO.File.WriteAllText(@"C:\Work\export\HI2.js", data);
         }
@@ -438,18 +477,36 @@ namespace HighLevelExport
             try
             {
                 var decodedMsg = utility.getDecodedSMSFromUrl(exportObject.call_product_url);
-
                 var caller = exportObject.call_caller == null ? "" : exportObject.call_caller;
                 var callee = exportObject.call_callee == null ? "" : exportObject.call_callee;
+                string cgi = "", Address = "", timeStamp = "", dateStamp = "", lat = "", lon = "";
+                if(exportObject.listCGI.Count() > 0)
+                {
+                    var tempcgiObj = exportObject.listCGI[0];
+                    cgi = tempcgiObj.value;
+                    Address = tempcgiObj.address;
+                    timeStamp = tempcgiObj.timestamp.ToString("HH.mm.ss");
+                    dateStamp = tempcgiObj.timestamp.ToString("dd/MM/yyyy");
+                    lat = utility.getLatLonFromString(exportObject.celltower_latlong).lat;
+                    lon = utility.getLatLonFromString(exportObject.celltower_latlong).lon;
+                }
 
                 var listDic = new string[][] {
                 new string[] { "Date:", exportObject.eventDate.ToString("dd/MM/yyyy")},
                 new string[] { "Time:", exportObject.eventDate.ToString("HH.mm.ss")},
-                new string[] { "CalledPartyNumber:", caller + "-" + callee} ,
+                new string[] { "CalledPartyNumber:",  callee} ,
+                new string[] { "CallingPartyNumber:", caller} ,
                 new string[] { "IMEI:", exportObject.call_participant_imei == null? "" : exportObject.call_participant_imei },
                 new string[] { "IMSI:", exportObject.call_participant_imsi == null? "" : exportObject.call_participant_imsi},
                 new string[] { "Monitored Target:", exportObject.InterceptName},
                 new string[] { "SMS-transfer-status:", ""},
+                new string[] { "Date:", dateStamp},
+                new string[] { "Time:", timeStamp},
+                new string[] { "CGI:", cgi},
+                new string[] { "Address:", Address},
+                new string[] { "City:", ""},
+                new string[] { "Latitude:", lat},
+                new string[] { "Longitude:", lon},
                 new string[] { "Decoded SMS:", decodedMsg},
                 new string[] { "Decoded Number:", "" },
             };
@@ -474,7 +531,7 @@ namespace HighLevelExport
                     length = "0",
                     network = utility.getNetworkByCGI(exportObject.celltower_cellid),
                     direction = exportObject.call_direction == "1" ? "IN" : "OUT",
-                    normCin = "",
+                    normCin = callee,
                     lastUpdate = exportObject.eventDate.ToString("dd/MM/yyyy HH.mm.ss"),
                     displayDateStamp = utility.getUnixTimeByDate(exportObject.eventDate)
                 };
@@ -486,14 +543,87 @@ namespace HighLevelExport
             
         }
 
+        private string getCallJsonString(ExportObject exportObject, string destinationPath)
+        {
+            var data = "### Call ###";
+            try
+            {
+                var caller = exportObject.call_caller == null ? "" : exportObject.call_caller;
+                var callee = exportObject.call_callee == null ? "" : exportObject.call_callee;
+
+                var url = exportObject.call_product_url;
+                var subUrl =  url.Replace("file://var/intellego/", "").Replace("/", @"\");
+                var absoluteUrl = StaticKey.MAIN_URL_FOLDER + subUrl.Trim();
+
+                var fileName = utility.getHI3FilenameFromUrl(exportObject.call_product_url);
+                var destinationFullUrl = destinationPath + @"\" + fileName;
+
+                File.Copy(absoluteUrl, destinationFullUrl);
+
+                var listDic = new string[][] {
+                new string[] { "Date:", exportObject.call_startTime.ToString("dd/MM/yyyy")},
+                new string[] { "Time:", exportObject.call_startTime.ToString("HH.mm.ss")},
+                new string[] { "Date:", exportObject.call_endTime.ToString("dd/MM/yyyy")},
+                new string[] { "Time:", exportObject.call_endTime.ToString("HH.mm.ss")},
+                new string[] { "CalledPartyNumber:",  callee} ,
+                new string[] { "CallingPartyNumber:", caller} ,
+                new string[] { "IMEI:", exportObject.call_participant_imei == null? "" : exportObject.call_participant_imei },
+                new string[] { "IMSI:", exportObject.call_participant_imsi == null? "" : exportObject.call_participant_imsi},
+                new string[] { "Monitored Target:", exportObject.InterceptName}
+                
+                };
+                var tempDic = listDic.ToList();
+
+                foreach(var item in exportObject.listCGI)
+                {
+                    //var tempcgiObj = exportObject.listCGI[0];
+                    tempDic.Add(new string[] { "Date:", item.timestamp.ToString("dd/MM/yyyy") });
+                    tempDic.Add(new string[] { "Time:", item.timestamp.ToString("HH.mm.ss") });
+                    tempDic.Add(new string[] {"CGI:",item.value});
+                    tempDic.Add(new string[] { "Address:", item.address });
+                    tempDic.Add(new string[] { "City:", item.address });
+                    tempDic.Add(new string[] { "Latitude", utility.getLatLonFromString(exportObject.celltower_latlong).lat });
+                    tempDic.Add(new string[] { "Longitude", utility.getLatLonFromString(exportObject.celltower_latlong).lon });
+                }
+
+                var export = new ExportLocation
+                {
+                    check = "",
+                    iriRecords = listDic.ToArray(),
+                    hi3File = fileName,
+                    important = false,
+                    note = "",
+                    phoneBook = "",
+                    _id = exportObject.elasticId,
+                    orclId = exportObject.elasticId,
+                    phone = exportObject.InterceptName,
+                    mito = "",
+                    targetId = exportObject.InterceptId,
+                    liuId = exportObject.InterceptName,
+                    type = "SPEECH",
+                    sequence = "",
+                    displayDate = exportObject.eventDate.ToString("dd/MM/yyyy HH.mm.ss"),
+                    length = exportObject.call_conversationDuration,
+                    network = utility.getNetworkByCGI(exportObject.celltower_cellid),
+                    direction = exportObject.call_direction == "1" ? "IN" : "OUT",
+                    normCin = callee,
+                    lastUpdate = exportObject.eventDate.ToString("dd/MM/yyyy HH.mm.ss"),
+                    displayDateStamp = utility.getUnixTimeByDate(exportObject.eventDate)
+                };
+                string json = JsonConvert.SerializeObject(export);
+                data += json;
+                return data;
+            }
+            catch { return data + "{ },"; }
+
+        }
+
         private string getLocationJsonString(ExportObject exportObject)
         {
             var data = "### Location ###";
             try
             {
-                
                 //var latlon = "['a','d']";
-
                 var listDic = new string[][] {
                 new string[] { "Date", exportObject.eventDate.ToString("dd/MM/yyyy")},
                 new string[] { "Time", exportObject.eventDate.ToString("HH.mm.ss")},

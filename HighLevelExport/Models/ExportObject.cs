@@ -17,8 +17,8 @@ namespace HighLevelExport.Models
 
         public string call_id { get; set; }
         public string call_direction { get; set; }
-        public string call_startTime { get; set; }
-        public string call_endTime { get; set; }
+        public DateTime call_startTime { get; set; }
+        public DateTime call_endTime { get; set; }
         public string call_type { get; set; }
         public string call_status { get; set; }
         public string call_callTerminationReason { get; set; }
@@ -80,6 +80,6 @@ namespace HighLevelExport.Models
         public string id { get; set; }
 
         public string address { get; set; }
-        public string address { get; set; }
+        public string latlon { get; set; }
     }
 }

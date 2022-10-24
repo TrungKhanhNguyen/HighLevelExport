@@ -26,44 +26,22 @@ namespace HighLevelExport.Helper
                 StaticKey.BSA_SERVER_IP, StaticKey.PORT, StaticKey.BSA_USER_NAME, StaticKey.BSA_PASSWORD, StaticKey.BSA_DATABASE_NAME, "None");
             return connStr;
         }
-        public void InsertLogToDB(string message, string status)
+        public void InsertLogToDB(string message, string status,string exportTime,string casename, DateTime eventTime, string interceptId, string interceptName)
         {
             var log = new ExportLog
             {
-                EventTime = "",
-                ExportTarget = "All",
-                ExportTime = DateTime.Now,
                 Messages = message,
                 Status = status,
+                CaseName = casename,
+                EventTime = eventTime,
+                ExportTime = exportTime,
+                InterceptId= interceptId,
+                InterceptName = interceptName
             };
             db.ExportLogs.Add(log);
             db.SaveChanges();
         }
 
-        //public MySqlCommand getLocationUpdate(MySqlConnection connection, string intercepid)
-        //{
-        //    string sql = "select metadata from intellego_events.document where id = '"+intercepid+ "' and type=19";
-        //    var cmd = new MySqlCommand(sql, connection);
-        //    return cmd;
-        //}
-        //public MySqlCommand getInterceptInfoByType(MySqlConnection connection, List<ExportObject> listExport)
-        //{
-        //    string listItem = "";
-        //    foreach (var item in listExport)
-        //    {
-        //        listItem += item.elasticId;
-        //        var itemIndex = listExport.IndexOf(item);
-        //        if (itemIndex != listExport.Count() - 1)
-        //        {
-        //            listItem += ",";
-        //        }
-        //    }
-        //    string sql = "select * from intellego_events.document where id in ( " + listItem + ") and type = 19;";
-        //    sql += " select a.*, b.*, c.*, d.* from intellego_events.document a, intellego_events.call b, intellego_events.call_product c, intellego_events.call_participant d where a.id in (" + listItem + ") and a.type = 6 and b.type = 4 and a.id = b.id and a.id = c.call and b.id = d.call and b.direction != 0 and b.direction != d.type;";
-        //    sql += " select a.*, b.*, c.*, d.* from intellego_events.document a, intellego_events.call b, intellego_events.call_product c, intellego_events.call_info d where a.id in (" + listItem + ") and a.type = 6 and b.type in (1, 2) and a.id = b.id and a.id = c.call and a.id=d.call;";
-        //    var cmd = new MySqlCommand(sql, connection);
-        //    return cmd;
-        //}
 
         public MySqlCommand getIntellegoCaseAndId(MySqlConnection connection, List<ExportTarget> listTarget)
         {
@@ -120,12 +98,14 @@ namespace HighLevelExport.Helper
             string listItem = "";
             foreach (var item in listExport)
             {
-                listItem += item.elasticId;
-                var itemIndex = listExport.IndexOf(item);
-                if (itemIndex != listExport.Count() - 1)
-                {
-                    listItem += ",";
-                }
+                
+                    listItem += item.elasticId;
+                    var itemIndex = listExport.IndexOf(item);
+                    if (itemIndex != listExport.Count() - 1)
+                    {
+                        listItem += ",";
+                    }
+                
             }
             string sql = "SELECT * FROM intellego_events.call_location where call_location.call in ( " + listItem + ");";
             var cmd = new MySqlCommand(sql, connection);

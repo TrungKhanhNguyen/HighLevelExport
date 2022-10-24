@@ -8,7 +8,6 @@ namespace HighLevelExport.Models
 {
     public class StaticKey
     {
-        public static string MAIN_FILE_PATH = "";
         public static string SERVER_IP = "172.10.2.33";
         public static string DATABASE_NAME = "intellego";
         public static string USER_NAME = "ss8mysql";
@@ -22,6 +21,7 @@ namespace HighLevelExport.Models
         public static string BSA_PASSWORD = "Ss8Inc$756";
 
         public static string MAIN_URL_FOLDER = @"Z:\";
+        public static string EXPORT_FOLDER = @"C:\Work\export";
     }
 
     
