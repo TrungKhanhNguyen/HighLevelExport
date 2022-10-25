@@ -122,22 +122,39 @@ namespace HighLevelExport.Helper
                     if (!String.IsNullOrEmpty(item.celltower_cellid))
                     {
                         listItem += item.celltower_cellid;
+
+                        var itemIndex = listExport.IndexOf(item);
+                        if (itemIndex != listExport.Count() - 1)
+                        {
+                            listItem += ",";
+                        }
                     }
                 }
                 else
                 {
                     foreach(var itemCGI in item.listCGI)
                     {
-                        listItem += itemCGI.value;
-                        var cgiIndex = item.listCGI.IndexOf(itemCGI);
-                        if (cgiIndex != item.listCGI.Count() - 1) listItem += ",";
+                        if (!String.IsNullOrEmpty(itemCGI.value))
+                        {
+                            listItem += itemCGI.value;
+                            var cgiIndex = item.listCGI.IndexOf(itemCGI);
+                            if (cgiIndex != item.listCGI.Count() - 1)
+                            {
+                                listItem += ",";
+                            }
+                            else
+                            {
+                                var itemIndex = listExport.IndexOf(item);
+                                if (itemIndex != listExport.Count() - 1)
+                                {
+                                    listItem += ",";
+                                }
+                            }
+                        }
+                        
                     }
                 }
-                var itemIndex = listExport.IndexOf(item);
-                if (itemIndex != listExport.Count() - 1)
-                {
-                    listItem += ",";
-                }
+                
             }
             string sql = "";
             if (String.IsNullOrEmpty(listItem))

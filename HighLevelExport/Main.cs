@@ -51,7 +51,7 @@ namespace HighLevelExport
             var startTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).ToString("yyyy-MM-ddTHH:mm:ssZ");
             var endTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).AddHours(3).ToString("yyyy-MM-ddTHH:mm:ssZ");
             var logExportTime = startTime + " - " + endTime;
-            var startTimeWrite = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).ToString("yyyy-MM-dd-HH.mm");
+            var startTimeWrite = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour, 0, 0).ToString("yyyy-MM-dd-HH-mm");
             var tempListExportObject2 = new List<ExportObject>();
             try
             {
@@ -287,6 +287,7 @@ namespace HighLevelExport
                                                     tempItem.call_startTime = tempstartTime;
                                                     tempItem.call_endTime = tempendTime;
                                                     tempItem.call_conversationDuration = conversationDuration;
+                                                    tempItem.listCGI = new List<Call_Location_Object>();
 
                                                     tempListExportObjectMySQL2.Add(tempItem);
                                                 }
@@ -312,8 +313,8 @@ namespace HighLevelExport
                                         {
                                             var id = callLocationRdr.GetString(0);
                                             var tempTimeStamp = callLocationRdr.GetDateTime(1);
-                                            var tempValue = callLocationRdr.GetString(2);
-                                            var tempType = callLocationRdr.GetString(3);
+                                            var tempValue = callLocationRdr.GetString(3);
+                                            var tempType = callLocationRdr.GetString(2);
                                             var tempCall = callLocationRdr.GetString(5);
                                             var cgi = new Call_Location_Object
                                             {
@@ -420,7 +421,7 @@ namespace HighLevelExport
                 foreach (var itemExport in listItemExport)
                 {
                     string initialData = "const dataHI2 = [";
-                    var destinationPath = StaticKey.EXPORT_FOLDER + @"\" + itemExport.CaseName + @"\" + startTime + @"\" + itemExport.InterceptName;
+                    var destinationPath = StaticKey.EXPORT_FOLDER + @"\" + itemExport.CaseName + "-" + startTime + @"\" + itemExport.InterceptName;
                     var hi2FullPath = destinationPath + @"\HI2.js";
                     Directory.CreateDirectory(destinationPath);
 
