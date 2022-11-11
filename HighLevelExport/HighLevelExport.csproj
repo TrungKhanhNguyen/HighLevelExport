@@ -70,15 +70,6 @@
     <Reference Include="Google.Protobuf, Version=3.19.4.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.19.4\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
-    <Reference Include="GSMCommServer, Version=1.21.0.0, Culture=neutral, PublicKeyToken=515d87df384dcc81, processorArchitecture=MSIL">
-      <HintPath>..\packages\GSMComm.1.21.1\lib\GSMCommServer.dll</HintPath>
-    </Reference>
-    <Reference Include="GSMCommShared, Version=1.21.0.0, Culture=neutral, PublicKeyToken=515d87df384dcc81, processorArchitecture=MSIL">
-      <HintPath>..\packages\GSMComm.1.21.1\lib\GSMCommShared.dll</HintPath>
-    </Reference>
-    <Reference Include="GSMCommunication, Version=1.21.0.0, Culture=neutral, PublicKeyToken=515d87df384dcc81, processorArchitecture=MSIL">
-      <HintPath>..\packages\GSMComm.1.21.1\lib\GSMCommunication.dll</HintPath>
-    </Reference>
     <Reference Include="K4os.Compression.LZ4, Version=1.2.6.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
       <HintPath>..\packages\K4os.Compression.LZ4.1.2.6\lib\net46\K4os.Compression.LZ4.dll</HintPath>
     </Reference>
@@ -96,18 +87,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PDUConverter, Version=1.21.0.0, Culture=neutral, PublicKeyToken=515d87df384dcc81, processorArchitecture=MSIL">
-      <HintPath>..\packages\GSMComm.1.21.1\lib\PDUConverter.dll</HintPath>
-    </Reference>
-    <Reference Include="Rebex.Common, Version=6.0.8314.0, Culture=neutral, PublicKeyToken=1c4638788972655d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rebex.Common.6.0.8314\lib\net46\Rebex.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Rebex.Networking, Version=6.0.8314.0, Culture=neutral, PublicKeyToken=1c4638788972655d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rebex.Networking.6.0.8314\lib\net46\Rebex.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="Rebex.Sftp, Version=6.0.8314.0, Culture=neutral, PublicKeyToken=1c4638788972655d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rebex.Sftp.6.0.8314\lib\net46\Rebex.Sftp.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet, Version=2020.0.2.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2020.0.2\lib\net40\Renci.SshNet.dll</HintPath>
@@ -154,12 +133,6 @@
     <Reference Include="Ubiety.Dns.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.8.0.30\lib\net48\Ubiety.Dns.Core.dll</HintPath>
     </Reference>
-    <Reference Include="WinScpHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WinSCPHelper.1.0.13\lib\WinScpHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="WinSCPnet, Version=1.4.0.7781, Culture=neutral, PublicKeyToken=2271ec4a3c56d0bf, processorArchitecture=MSIL">
-      <HintPath>..\packages\WinSCPHelper.1.0.13\lib\WinSCPnet.dll</HintPath>
-    </Reference>
     <Reference Include="ZstdNet, Version=1.4.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.8.0.30\lib\net48\ZstdNet.dll</HintPath>
     </Reference>
@@ -179,6 +152,7 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\CaseObject.cs" />
     <Compile Include="Models\ElasticObject.cs" />
     <Compile Include="Models\ExportLocation.cs" />
     <Compile Include="Models\ExportLog.cs">
@@ -266,9 +240,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model1.edmx</DependentUpon>
       <LastGenOutput>Model1.cs</LastGenOutput>
-    </Content>
-    <Content Include="WinSCP.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

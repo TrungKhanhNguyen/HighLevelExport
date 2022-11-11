@@ -1,4 +1,6 @@
-﻿using HighLevelExport.Models;
+﻿using HighLevelExport.Helper;
+using HighLevelExport.Models;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +20,7 @@ namespace HighLevelExport
         {
             InitializeComponent();
         }
+        private DBHelper helper = new DBHelper();
 
         private void btnClose_Click(object sender, EventArgs e)
         {
@@ -32,10 +35,45 @@ namespace HighLevelExport
         private void TargetManager_Load(object sender, EventArgs e)
         {
             dataGridView1.AutoGenerateColumns = false;
+
+            var connectionString = helper.getConnectionString();
+            var listObj = new List<CaseObject>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                using (MySqlCommand cmd = helper.getListCaseName(connection))
+                {
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            var tempObj = new CaseObject
+                            {
+                                id = rdr.GetString(0),
+                                name = rdr.GetString(1),
+                                //brief = rdr.GetString(2),
+                                //owner = rdr.GetString(3),
+                                //dateCreated = rdr.GetString(4),
+                                //dateUpdated = rdr.GetString(5),
+                                //sensitivity = rdr.GetString(6),
+                                //priority    = rdr.GetString(7),
+                                //status = rdr.GetString(8),
+                                //group = rdr.GetString(9),
+                                //trashedTime = rdr.GetString(10),
+                            };
+                            listObj.Add(tempObj);
+                        }
+                    }
+                }
+            }
             Dictionary<string, string> test = new Dictionary<string, string>();
-            test.Add("1", "test_export");
-            test.Add("2", "MVThang");
-            test.Add("3", "CAHN");
+            foreach(var item in listObj)
+            {
+                test.Add(item.id, item.name);
+            }
+            //test.Add("1", "test_export");
+            //test.Add("2", "MVThang");
+            //test.Add("3", "CAHN");
             comboBox1.DataSource = new BindingSource(test, null);
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";

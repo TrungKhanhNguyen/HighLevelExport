@@ -41,6 +41,11 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.txtMultiLog = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.startTimeDate = new System.Windows.Forms.DateTimePicker();
+            this.startTimeTime = new System.Windows.Forms.DateTimePicker();
+            this.endTimeTime = new System.Windows.Forms.DateTimePicker();
+            this.endTimeDate = new System.Windows.Forms.DateTimePicker();
             this.SuspendLayout();
             // 
             // bunifuElipse1
@@ -170,7 +175,7 @@
             this.btnStart.IdleIconLeftImage = null;
             this.btnStart.IdleIconRightImage = null;
             this.btnStart.IndicateFocus = false;
-            this.btnStart.Location = new System.Drawing.Point(13, 58);
+            this.btnStart.Location = new System.Drawing.Point(10, 113);
             this.btnStart.Name = "btnStart";
             this.btnStart.OnDisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191)))));
             this.btnStart.OnDisabledState.BorderRadius = 1;
@@ -260,7 +265,7 @@
             this.btnStop.IdleIconLeftImage = null;
             this.btnStop.IdleIconRightImage = null;
             this.btnStop.IndicateFocus = false;
-            this.btnStop.Location = new System.Drawing.Point(125, 58);
+            this.btnStop.Location = new System.Drawing.Point(122, 113);
             this.btnStop.Name = "btnStop";
             this.btnStop.OnDisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191)))));
             this.btnStop.OnDisabledState.BorderRadius = 1;
@@ -306,7 +311,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(246, 77);
+            this.linkLabel1.Location = new System.Drawing.Point(243, 132);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(80, 13);
             this.linkLabel1.TabIndex = 8;
@@ -315,10 +320,10 @@
             // 
             // txtMultiLog
             // 
-            this.txtMultiLog.Location = new System.Drawing.Point(13, 96);
+            this.txtMultiLog.Location = new System.Drawing.Point(10, 151);
             this.txtMultiLog.Multiline = true;
             this.txtMultiLog.Name = "txtMultiLog";
-            this.txtMultiLog.Size = new System.Drawing.Size(313, 260);
+            this.txtMultiLog.Size = new System.Drawing.Size(321, 272);
             this.txtMultiLog.TabIndex = 9;
             // 
             // timer1
@@ -326,12 +331,61 @@
             this.timer1.Interval = 60000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(10, 49);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(319, 21);
+            this.comboBox1.TabIndex = 10;
+            // 
+            // startTimeDate
+            // 
+            this.startTimeDate.CustomFormat = "dd-MM-yyyy";
+            this.startTimeDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.startTimeDate.Location = new System.Drawing.Point(10, 77);
+            this.startTimeDate.Name = "startTimeDate";
+            this.startTimeDate.Size = new System.Drawing.Size(80, 20);
+            this.startTimeDate.TabIndex = 11;
+            // 
+            // startTimeTime
+            // 
+            this.startTimeTime.CustomFormat = "HH:mm";
+            this.startTimeTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.startTimeTime.Location = new System.Drawing.Point(96, 77);
+            this.startTimeTime.Name = "startTimeTime";
+            this.startTimeTime.Size = new System.Drawing.Size(49, 20);
+            this.startTimeTime.TabIndex = 12;
+            // 
+            // endTimeTime
+            // 
+            this.endTimeTime.CustomFormat = "HH:mm";
+            this.endTimeTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.endTimeTime.Location = new System.Drawing.Point(280, 77);
+            this.endTimeTime.Name = "endTimeTime";
+            this.endTimeTime.Size = new System.Drawing.Size(49, 20);
+            this.endTimeTime.TabIndex = 14;
+            // 
+            // endTimeDate
+            // 
+            this.endTimeDate.CustomFormat = "dd-MM-yyyy";
+            this.endTimeDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.endTimeDate.Location = new System.Drawing.Point(194, 77);
+            this.endTimeDate.Name = "endTimeDate";
+            this.endTimeDate.Size = new System.Drawing.Size(80, 20);
+            this.endTimeDate.TabIndex = 13;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(237)))), ((int)(((byte)(240)))));
-            this.ClientSize = new System.Drawing.Size(338, 368);
+            this.ClientSize = new System.Drawing.Size(343, 435);
+            this.Controls.Add(this.endTimeTime);
+            this.Controls.Add(this.endTimeDate);
+            this.Controls.Add(this.startTimeTime);
+            this.Controls.Add(this.startTimeDate);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.txtMultiLog);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.btnStop);
@@ -358,5 +412,10 @@
         private Bunifu.UI.WinForms.BunifuButton.BunifuButton btnStart;
         private System.Windows.Forms.TextBox txtMultiLog;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.DateTimePicker startTimeDate;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.DateTimePicker startTimeTime;
+        private System.Windows.Forms.DateTimePicker endTimeTime;
+        private System.Windows.Forms.DateTimePicker endTimeDate;
     }
 }

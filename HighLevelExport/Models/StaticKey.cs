@@ -22,6 +22,9 @@ namespace HighLevelExport.Models
 
         public static string MAIN_URL_FOLDER = @"Z:\";
         public static string EXPORT_FOLDER = @"C:\Work\export";
+
+        public static string ELASTIC_IP = "http://172.25.3.34:9200";
+        public static string ELASTIC_LOCAL_IP = "http://localhost:9200/";
     }
 
     

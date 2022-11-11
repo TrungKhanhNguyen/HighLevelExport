@@ -41,7 +41,19 @@ namespace HighLevelExport.Helper
             db.ExportLogs.Add(log);
             db.SaveChanges();
         }
+        public MySqlCommand getListCaseName(MySqlConnection connection)
+        {
+            string sql = "SELECT * FROM intellego.case";
+            var cmd = new MySqlCommand(sql, connection);
+            return cmd;
+        }
 
+        public MySqlCommand getSingleIntellegoCaseAndId(MySqlConnection connection, ExportTarget target)
+        {
+            string sql = "select b.name as CaseName, a.name as InterceptName, a.id as InterceptId from intellego.intercept a, intellego.case b, intellego.case_intercept c where b.name = '" + target.TargetName + "' and b.id = c.case  and c.intercept = a.id order by a.id";
+            var cmd = new MySqlCommand(sql, connection);
+            return cmd;
+        }
 
         public MySqlCommand getIntellegoCaseAndId(MySqlConnection connection, List<ExportTarget> listTarget)
         {
@@ -73,7 +85,15 @@ namespace HighLevelExport.Helper
                     listItem += ",";
                 }
             }
-            string sql = "select * from intellego_events.document where id in ( " + listItem + ") and type = 19;";
+            string sql = "";
+            if (String.IsNullOrEmpty(listItem))
+            {
+                sql = "select * from intellego_events.document where id = 0";
+            }
+            else
+            {
+                sql = "select * from intellego_events.document where id in ( " + listItem + ") and type = 19;";
+            }
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }
@@ -98,16 +118,22 @@ namespace HighLevelExport.Helper
             string listItem = "";
             foreach (var item in listExport)
             {
-                
-                    listItem += item.elasticId;
-                    var itemIndex = listExport.IndexOf(item);
-                    if (itemIndex != listExport.Count() - 1)
-                    {
-                        listItem += ",";
-                    }
-                
+
+                listItem += item.elasticId;
+                var itemIndex = listExport.IndexOf(item);
+                listItem += ",";
+
             }
-            string sql = "SELECT * FROM intellego_events.call_location where call_location.call in ( " + listItem + ");";
+            string sql = "";
+            if (string.IsNullOrEmpty(listItem))
+            {
+                sql = "SELECT * FROM intellego_events.call_location where id < 1;";
+            }
+            else
+            {
+                sql = "SELECT * FROM intellego_events.call_location where call_location.call in ( " + listItem.TrimEnd(',') + ");";
+            }
+            
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }
