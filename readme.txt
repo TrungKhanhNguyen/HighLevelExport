@@ -1,0 +1,2 @@
+- Change: connectionString="metadata=res://*/Model.Project.csdl|res://*/Model.Project.ssdl|res://*/Model.Project.msl; to: connectionString="metadata=res://*/;
+- Add System.Data.Entity in Reference Project

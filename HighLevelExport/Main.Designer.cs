@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges borderEdges6 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-            Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges borderEdges5 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges();
+            Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges borderEdges7 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges();
+            Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges borderEdges8 = new Bunifu.UI.WinForms.BunifuButton.BunifuButton.BorderEdges();
             this.bunifuElipse1 = new Bunifu.Framework.UI.BunifuElipse(this.components);
             this.bunifuDragControl1 = new Bunifu.Framework.UI.BunifuDragControl(this.components);
             this.btnMinimize = new Bunifu.UI.WinForms.BunifuImageButton();
@@ -40,7 +40,6 @@
             this.btnStop = new Bunifu.UI.WinForms.BunifuButton.BunifuButton();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.txtMultiLog = new System.Windows.Forms.TextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.startTimeDate = new System.Windows.Forms.DateTimePicker();
             this.startTimeTime = new System.Windows.Forms.DateTimePicker();
@@ -93,6 +92,7 @@
             this.btnMinimize.WaitOnLoad = false;
             this.btnMinimize.Zoom = 20;
             this.btnMinimize.ZoomSpeed = 10;
+            this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
             // 
             // btnClose
             // 
@@ -127,6 +127,7 @@
             this.btnClose.WaitOnLoad = false;
             this.btnClose.Zoom = 20;
             this.btnClose.ZoomSpeed = 10;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnStart
             // 
@@ -147,11 +148,11 @@
             this.btnStart.ColorContrastOnClick = 45;
             this.btnStart.ColorContrastOnHover = 45;
             this.btnStart.Cursor = System.Windows.Forms.Cursors.Default;
-            borderEdges6.BottomLeft = true;
-            borderEdges6.BottomRight = true;
-            borderEdges6.TopLeft = true;
-            borderEdges6.TopRight = true;
-            this.btnStart.CustomizableEdges = borderEdges6;
+            borderEdges7.BottomLeft = true;
+            borderEdges7.BottomRight = true;
+            borderEdges7.TopLeft = true;
+            borderEdges7.TopRight = true;
+            this.btnStart.CustomizableEdges = borderEdges7;
             this.btnStart.DialogResult = System.Windows.Forms.DialogResult.None;
             this.btnStart.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191)))));
             this.btnStart.DisabledFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
@@ -237,11 +238,11 @@
             this.btnStop.ColorContrastOnClick = 45;
             this.btnStop.ColorContrastOnHover = 45;
             this.btnStop.Cursor = System.Windows.Forms.Cursors.Default;
-            borderEdges5.BottomLeft = true;
-            borderEdges5.BottomRight = true;
-            borderEdges5.TopLeft = true;
-            borderEdges5.TopRight = true;
-            this.btnStop.CustomizableEdges = borderEdges5;
+            borderEdges8.BottomLeft = true;
+            borderEdges8.BottomRight = true;
+            borderEdges8.TopLeft = true;
+            borderEdges8.TopRight = true;
+            this.btnStop.CustomizableEdges = borderEdges8;
             this.btnStop.DialogResult = System.Windows.Forms.DialogResult.None;
             this.btnStop.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(191)))), ((int)(((byte)(191)))));
             this.btnStop.DisabledFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
@@ -326,11 +327,6 @@
             this.txtMultiLog.Size = new System.Drawing.Size(321, 272);
             this.txtMultiLog.TabIndex = 9;
             // 
-            // timer1
-            // 
-            this.timer1.Interval = 60000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
@@ -393,6 +389,7 @@
             this.Controls.Add(this.btnMinimize);
             this.Controls.Add(this.btnClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.Text = "Main";
             this.Load += new System.EventHandler(this.Main_Load);

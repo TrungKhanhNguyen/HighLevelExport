@@ -1,0 +1,79 @@
+﻿.panel-addtarget .dropdown-menu.show {
+    display: inline-block !important;
+}
+.panel-addtarget .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.25rem;
+    
+}
+.panel-addtarget .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+#btnAdd{
+    display : block;
+    font-size : 13px;
+}
+.label-casename{
+    color : transparent;
+}
+.panel-addtarget{
+    font-size : 13px;
+}
+    .panel-addtarget select {
+        font-size: 13px;
+    }
+/*.table-target-wrapper .dataTables_length {
+    display: inline-block;
+}
+
+.table-target-wrapper .dataTables_filter {
+    display: inline-block;
+    float : right;
+}*/
+.table-target{
+    font-size : 14px;
+}
+.total-target{
+    font-weight : 600;
+}
+.alert-success-target, .alert-danger-target {
+    position: fixed;
+    right: -400px;
+    transition: right linear 0.5s;
+    font-size: 13px;
+    width: 300px;
+    bottom : 0;
+}
+    .alert-success-target.show, .alert-danger-target.show {
+        right: 20px;
+    }
+    .color-green{
+        color : green;
+    }
+.color-red {
+    color: darkred;
+}

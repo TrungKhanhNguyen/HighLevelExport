@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Neon Admin Panel" />
+    <meta name="author" content="" />
+
+    <link rel="icon" href="assets/images/favicon.ico">
+
+    <title>LMC Export Manager</title>
+
+    <link rel="stylesheet" href="~/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css">
+    <link rel="stylesheet" href="~/assets/css/font-icons/entypo/css/entypo.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="~/assets/css/neon-core.css">
+    <link rel="stylesheet" href="~/assets/css/neon-theme.css">
+    <link rel="stylesheet" href="~/assets/css/neon-forms.css">
+    <link rel="stylesheet" href="~/assets/css/custom.css">
+    <link rel="stylesheet" href="~/assets/js/datatables/datatables.css">
+
+    <script src="~/assets/js/jquery-1.11.3.min.js"></script>
+</head>
+<body class="page-body">
+
+    <div class="page-container">
+        <div class="sidebar-menu">
+
+            <div class="sidebar-menu-inner">
+
+                <header class="logo-env">
+
+                    <!-- logo -->
+                    <div class="logo">
+                        <a href="index.html">
+                            <img src="~/assets/images/logo@2x.png" width="120" alt="" />
+                        </a>
+                    </div>
+
+                    <!-- logo collapse icon -->
+                    <div class="sidebar-collapse">
+                        <a href="#" class="sidebar-collapse-icon">
+                            <!-- add class "with-animation" if you want sidebar to have animation during expanding/collapsing transition -->
+                            <i class="entypo-menu"></i>
+                        </a>
+                    </div>
+
+
+                    <!-- open/close menu icon (do not remove if you want to enable menu on mobile devices) -->
+                    <div class="sidebar-mobile-menu visible-xs">
+                        <a href="#" class="with-animation">
+                            <!-- add class "with-animation" to support animation -->
+                            <i class="entypo-menu"></i>
+                        </a>
+                    </div>
+
+                </header>
+
+
+                <ul id="main-menu" class="main-menu">
+                    <!-- add class "multiple-expanded" to allow multiple submenus to open -->
+                    <!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
+                    @{
+                        var identity = System.Web.HttpContext.Current.User.Identity.Name;
+                        var listItem = identity.Split('-');
+                        var isAdmin = false;
+                        if (listItem.Length > 1)
+                        {
+                            isAdmin = Convert.ToBoolean(listItem[1]);
+                        }
+
+
+                    }
+                    @if (isAdmin)
+                    {
+                        <li>
+                            <a href="/Home/Index">
+                                <i class="entypo-hourglass"></i>
+                                <span class="title">Target export every 1 hour</span>
+                            </a>
+                        </li>
+                    }
+
+
+                    <li>
+                        <a href="/PerTwoMinutes/Index">
+                            <i class="entypo-fast-forward"></i>
+                            <span class="title">Target export every 2 minutes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Home/Index">
+                            <i class="entypo-calendar"></i>
+                            <span class="title">Export Manual</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Home/Index" target="_blank">
+                            <i class="entypo-newspaper"></i>
+                            <span class="title">Logs</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+        <div class="main-content">
+            <div class="row">
+
+                <!-- Profile Info and Notifications -->
+                <div class="col-md-6 col-sm-8 clearfix">
+
+                    <ul class="user-info pull-left pull-none-xsm">
+
+                        <!-- Profile Info -->
+                        
+
+                    </ul>
+
+                    
+
+                </div>
+
+
+                <!-- Raw Links -->
+                <div class="col-md-6 col-sm-4 clearfix hidden-xs">
+                    <ul class="list-inline links-list pull-right">
+                        <li class="profile-info dropdown">
+                            <!-- add class "pull-right" if you want to place this from right -->
+
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size: 13px; margin-right : 20px;">
+                                John Henderson
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <!-- Reverse Caret -->
+                                <li class="caret"></li>
+
+                                <!-- Profile sub-links -->
+                                <li>
+                                    <a href="extra-timeline.html">
+                                        <i class="entypo-user"></i>
+                                        Edit Profile
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="mailbox.html">
+                                        <i class="entypo-mail"></i>
+                                        Inbox
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="extra-calendar.html">
+                                        <i class="entypo-calendar"></i>
+                                        Calendar
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="#">
+                                        <i class="entypo-clipboard"></i>
+                                        Tasks
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="/Login/Logout">
+                                Log Out <i class="entypo-logout right"></i>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <hr />
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <link rel="stylesheet" href="~/assets/js/select2/select2-bootstrap.css">
+    <link rel="stylesheet" href="~/assets/js/select2/select2.css">
+    <link rel="stylesheet" href="~/assets/js/selectboxit/jquery.selectBoxIt.css">
+    <link rel="stylesheet" href="~/assets/js/daterangepicker/daterangepicker-bs3.css">
+    <link rel="stylesheet" href="~/assets/js/icheck/skins/minimal/_all.css">
+    <link rel="stylesheet" href="~/assets/js/icheck/skins/square/_all.css">
+    <link rel="stylesheet" href="~/assets/js/icheck/skins/flat/_all.css">
+    <link rel="stylesheet" href="~/assets/js/icheck/skins/futurico/futurico.css">
+    <link rel="stylesheet" href="~/assets/js/icheck/skins/polaris/polaris.css">
+    <link rel="stylesheet" href="~/assets/js/zurb-responsive-tables/responsive-tables.css">
+    <link href="~/assets/css/main.css" rel="stylesheet" />
+    <script src="~/assets/js/popper.min.js"></script>
+    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>*@
+
+    <!-- Bottom scripts (common) -->
+    <script src="~/assets/js/gsap/TweenMax.min.js"></script>
+    <script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
+    <script src="~/assets/js/joinable.js"></script>
+    <script src="~/assets/js/resizeable.js"></script>
+    <script src="~/assets/js/neon-api.js"></script>
+    @*<script src="~/assets/js/datatables/datatables.js"></script>*@
+    <script src="~/assets/js/main.js"></script>
+
+    <script src="~/assets/js/select2/select2.min.js"></script>
+    <script src="~/assets/js/bootstrap-tagsinput.min.js"></script>
+    <script src="~/assets/js/typeahead.min.js"></script>
+    @*<script src="~/assets/js/selectboxit/jquery.selectBoxIt.min.js"></script>*@
+    <script src="~/assets/js/bootstrap-datepicker.js"></script>
+    <script src="~/assets/js/bootstrap-timepicker.min.js"></script>
+    <script src="~/assets/js/bootstrap-colorpicker.min.js"></script>
+    <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/daterangepicker/daterangepicker.js"></script>
+    <script src="~/assets/js/jquery.multi-select.js"></script>
+    <script src="~/assets/js/icheck/icheck.min.js"></script>
+
+    <!-- Imported scripts on this page -->
+    <script src="~/assets/js/zurb-responsive-tables/responsive-tables.js"></script>
+    <script src="~/assets/js/neon-chat.js"></script>
+
+
+    <!-- JavaScripts initializations and stuff -->
+    <script src="~/assets/js/neon-custom.js"></script>
+
+
+    <!-- Demo Settings -->
+    <script src="~/assets/js/neon-demo.js"></script>
+</body>
+</html>

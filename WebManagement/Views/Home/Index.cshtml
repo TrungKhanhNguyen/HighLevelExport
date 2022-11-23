@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+@model IEnumerable<ConnectionHelper.Models.ExportTarget>
+
+<p style=" font-size: 14px; font-weight: 600;" class="color-green target_add_success hide">Successfully adding target!!!</p>
+<p style=" font-size: 14px; font-weight: 600;" class="color-red target_add_fail hide">Target already existed!!!</p>
+<div class="panel panel-default panel-shadow panel-addtarget" data-collapsed="0">
+    <!-- to apply shadow add class "panel-shadow" -->
+    <!-- panel head -->
+    <div class="panel-heading">
+        <div class="panel-title" style="font-size: 13px;">Add case</div>
+    </div>
+
+    <!-- panel body -->
+    <div class="panel-body">
+       
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="selectCase" class="form-label">Select Case name</label>
+
+                    @Html.DropDownList("dropdownCase", ViewBag.AllCase as SelectList, new { @class = "form-control" })
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="btnAddTarget" class="form-label label-casename" style="display : block;">Add target</label>
+                    <button type="button" id="btnAddTarget" class="btn btn-green btn-icon">
+                        Add Target
+                        <i class="entypo-check"></i>
+                    </button>
+                </div>
+            </div>
+       
+    </div>
+
+</div>
+
+<p><b style="font-size : 18px;">Monitoring target</b><span class="pull-right" style="font-size: 14px;">Total targets: <span class="total-target">20</span></span></p>
+
+<table class="table table-bordered table-target responsive">
+    <thead>
+        <tr>
+            <th width="15%">Case Id</th>
+            <th>Casename</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var item in Model)
+            {
+            <tr role="row">
+                <td class="caseId" id="@item.TargetId">@item.TargetId</td>
+                <td>@item.TargetName</td>
+                <td>
+                    <a href="javascript:;" class="btn btn-danger btn-sm btn-icon btn-delete icon-left">
+                        <i class="entypo-cancel"></i>
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+</table>
+
+<div class="alert alert-success alert-success-target"><strong>Well done!</strong> Successfully deleted target.</div>
+<div class="alert alert-danger alert-danger-target"><strong>Failed!!!</strong> Something wrong.</div>
+
+<div class="modal fade" id="modal-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Basic Modal</h4>
+            </div>
+
+            <div class="modal-body">
+                Hello I am a Modal!
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info btn-sure-delete">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

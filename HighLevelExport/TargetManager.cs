@@ -1,6 +1,5 @@
-﻿using HighLevelExport.Helper;
-using HighLevelExport.Models;
-using MySql.Data.MySqlClient;
+﻿using ConnectionHelper.Helper;
+using ConnectionHelper.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,49 +35,46 @@ namespace HighLevelExport
         {
             dataGridView1.AutoGenerateColumns = false;
 
-            var connectionString = helper.getConnectionString();
-            var listObj = new List<CaseObject>();
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                connection.Open();
-                using (MySqlCommand cmd = helper.getListCaseName(connection))
-                {
-                    using (MySqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        while (rdr.Read())
-                        {
-                            var tempObj = new CaseObject
-                            {
-                                id = rdr.GetString(0),
-                                name = rdr.GetString(1),
-                                //brief = rdr.GetString(2),
-                                //owner = rdr.GetString(3),
-                                //dateCreated = rdr.GetString(4),
-                                //dateUpdated = rdr.GetString(5),
-                                //sensitivity = rdr.GetString(6),
-                                //priority    = rdr.GetString(7),
-                                //status = rdr.GetString(8),
-                                //group = rdr.GetString(9),
-                                //trashedTime = rdr.GetString(10),
-                            };
-                            listObj.Add(tempObj);
-                        }
-                    }
-                }
-            }
-            Dictionary<string, string> test = new Dictionary<string, string>();
-            foreach(var item in listObj)
-            {
-                test.Add(item.id, item.name);
-            }
-            //test.Add("1", "test_export");
-            //test.Add("2", "MVThang");
-            //test.Add("3", "CAHN");
-            comboBox1.DataSource = new BindingSource(test, null);
-            comboBox1.DisplayMember = "Value";
-            comboBox1.ValueMember = "Key";
+            //var connectionString = helper.getConnectionString();
+            //var listObj = new List<CaseObject>();
+            //using (MySqlConnection connection = new MySqlConnection(connectionString))
+            //{
+            //    connection.Open();
+            //    using (MySqlCommand cmd = helper.getListCaseName(connection))
+            //    {
+            //        using (MySqlDataReader rdr = cmd.ExecuteReader())
+            //        {
+            //            while (rdr.Read())
+            //            {
+            //                var tempObj = new CaseObject
+            //                {
+            //                    id = rdr.GetString(0),
+            //                    name = rdr.GetString(1),
+            //                    //brief = rdr.GetString(2),
+            //                    //owner = rdr.GetString(3),
+            //                    //dateCreated = rdr.GetString(4),
+            //                    //dateUpdated = rdr.GetString(5),
+            //                    //sensitivity = rdr.GetString(6),
+            //                    //priority    = rdr.GetString(7),
+            //                    //status = rdr.GetString(8),
+            //                    //group = rdr.GetString(9),
+            //                    //trashedTime = rdr.GetString(10),
+            //                };
+            //                listObj.Add(tempObj);
+            //            }
+            //        }
+            //    }
+            //}
+            //Dictionary<string, string> test = new Dictionary<string, string>();
+            //foreach(var item in listObj)
+            //{
+            //    test.Add(item.id, item.name);
+            //}
+            //comboBox1.DataSource = new BindingSource(test, null);
+            //comboBox1.DisplayMember = "Value";
+            //comboBox1.ValueMember = "Key";
 
-            lblSelectedId.Text = ((KeyValuePair<string, string>)comboBox1.SelectedItem).Key;
+            //lblSelectedId.Text = ((KeyValuePair<string, string>)comboBox1.SelectedItem).Key;
             reloadData();
         }
 
@@ -134,7 +130,7 @@ namespace HighLevelExport
 
         private void reloadData()
         {
-            var listData = db.ExportTargets.ToList();
+            var listData = helper.GetListExportTarget();
             dataGridView1.DataSource = listData;
         }
 
