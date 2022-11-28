@@ -2,4 +2,172 @@
     Layout = "~/Views/Shared/_MainLayout.cshtml";
 }
 
-<h3>Two minutes</h3>
+@model IEnumerable<ConnectionHelper.Models.HotNumber>
+
+
+
+
+<p style=" font-size: 14px; font-weight: 600;" class="color-green hotnumber_add_success hide">Successfully adding phone number!!!</p>
+<p style=" font-size: 14px; font-weight: 600;" class="color-red hotnumber_add_fail hide">Phone number already existed!!!</p>
+<div class="panel panel-default panel-shadow panel-addtarget" data-collapsed="0">
+    <!-- to apply shadow add class "panel-shadow" -->
+    <!-- panel head -->
+    <div class="panel-heading">
+        <div class="panel-title" style="font-size: 13px;">Add case</div>
+    </div>
+
+    <!-- panel body -->
+    <div class="panel-body">
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="selectCase" class="form-label">Target number</label>
+
+                <input type="text" class="form-control" id="target_number" placeholder="Enter phone number">
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="btnAddNumber" class="form-label label-casename" style="display : block;">Add number</label>
+                <button type="button" id="btnAddNumber" class="btn btn-green btn-icon">
+                    Add number
+                    <i class="entypo-check"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<p><b style="font-size : 18px;">Monitoring hot number</b><span class="pull-right" style="font-size: 14px;">Total numbers: <span class="total-hotnumber">20</span></span></p>
+
+<table class="table table-bordered table-hotnumber responsive">
+    <thead>
+        <tr>
+            <th>Phone number</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr role="row">
+                <td id="@item.PhoneNumber">@item.PhoneNumber</td>
+                <td>
+                    <a href="javascript:;" class="btn btn-danger btn-sm btn-icon btn-delete icon-left">
+                        <i class="entypo-cancel"></i>
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="dataTables_wrapper" id="table-1_wrapper">
+    <table class="table table-bordered datatable dataTable" id="table-1" role="grid" aria-describedby="table-1_info">
+        <thead>
+            <tr role="row">
+                <th data-hide="phone" class="sorting_asc" tabindex="0" aria-controls="table-1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Phone number</th>
+                <th class="sorting" tabindex="0" aria-controls="table-1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 355px;"></th>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr role="row">
+                    <td id="@item.PhoneNumber">@item.PhoneNumber</td>
+                    <td>
+                        <a href="/PerTwoMinutes/Delete?id=@item.Id" class="btn btn-danger btn-sm btn-icon btn-delete icon-left">
+                            <i class="entypo-cancel"></i>
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <th rowspan="1" colspan="1">Phone number</th>
+                <th rowspan="1" colspan="1"></th>
+
+        </tfoot>
+    </table>
+</div>
+@*<div class="alert alert-success alert-success-hotnumber"><strong>Well done!</strong> Successfully deleted target.</div>
+    <div class="alert alert-danger alert-danger-hotnumber"><strong>Failed!!!</strong> Something wrong.</div>*@
+
+<script>
+    $(document).ready(function () {
+        calculateTotalRecord();
+        function calculateTotalRecord() {
+            var totaltarget = $('.table-hotnumber tbody tr').length;
+            $('.total-hotnumber').text(totaltarget);
+        }
+
+        $('#btnAddNumber').click(function () {
+            var phoneValue = $('#target_number').val();
+            console.log(phoneValue);
+            if ($(".table-hotnumber tbody td[id=" + phoneValue + "]").length)         // use this if you are using id to check
+            {
+                // it exists
+                console.log("existed");
+                $('.hotnumber_add_fail').html('Phone number already existed!!!');
+                $('.hotnumber_add_fail').removeClass('hide');
+                setTimeout(function () {
+                    $('.hotnumber_add_fail').addClass('hide');
+                }, 5000);
+            }
+            else {
+                console.log("not existed");
+                $.ajax({
+                    type: "POST",
+                    url: '/PerTwoMinutes/AddPhoneNumber',
+                    dataType: "json",
+                    data: JSON.stringify({ phone: { PhoneNumber: phoneValue } }),
+                    //data: { id: dropValue, name: dropText },
+                    contentType: "application/json; charset=utf-8",
+                    success: function (connObjReturn) {
+                        if (connObjReturn == "Ok") {
+                            $('.hotnumber_add_success').removeClass('hide');
+                            setTimeout(function () {
+                                $('.hotnumber_add_success').addClass('hide');
+                            }, 5000);
+                            $('.table-hotnumber tbody').append("<tr role='row'><td id='" + phoneValue + "'>" + phoneValue + "</td><td><a href='javascript:;' class='btn btn-danger btn-sm btn-icon btn-delete icon-left'><i class='entypo-cancel'></i>Delete</a></td></tr>");
+                            calculateTotalRecord();
+                        } else {
+                            $('.hotnumber_add_fail').html('Failed! Cannot add target!');
+                            $('.hotnumber_add_fail').removeClass('hide');
+                            setTimeout(function () {
+                                $('.hotnumber_add_fail').addClass('hide');
+                            }, 5000);
+                        }
+
+
+                        //recountConnect();
+                    },
+                    error: function () {
+                    }
+                });
+            }
+
+        });
+
+
+        var $table1 = jQuery('#table-1');
+
+        // Initialize DataTable
+        $table1.DataTable({
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "bStateSave": true
+        });
+
+        // Initalize Select Dropdown after DataTables is created
+        $table1.closest('.dataTables_wrapper').find('select').select2({
+            minimumResultsForSearch: -1
+        });
+    });
+</script>
+
+<script src="~/assets/js/datatables/datatables.js"></script>

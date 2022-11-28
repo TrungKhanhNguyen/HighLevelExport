@@ -16,7 +16,7 @@ namespace HighLevelExport
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TargetManager());
+            Application.Run(new Main());
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using ConnectionHelper.Helper;
 using ConnectionHelper.Models;
 using Newtonsoft.Json;
+using Quartz;
+using Quartz.Impl;
 using Renci.SshNet;
 using System;
 using System.Collections.Generic;
@@ -16,12 +18,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-
 namespace HighLevelExport
 {
-    public partial class Main : Form
+
+    //public class SimpleJob : IJob
+    //{
+    //    public Task Execute(IJobExecutionContext context)
+    //    {
+    //        //txtMultiLog.Text += Environment.NewLine + " " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+    //        throw new NotImplementedException();
+    //    }
+    //}
+
+    public partial class Main : Form,IJob
     {
-        private ExportHistoryEntities db = new ExportHistoryEntities();
+        //private ExportHistoryEntities db = new ExportHistoryEntities();
         private List<ExportTarget> listTarget = new List<ExportTarget>();
         private DBHelper helper = new DBHelper();
         private MainHelper mainHelper = new MainHelper();
@@ -32,15 +43,48 @@ namespace HighLevelExport
         {
             InitializeComponent();
         }
+        //public Task Execute(IJobExecutionContext context)
+        //{
+        //    Add();
+        //    throw new NotImplementedException();
+
+        //}
+        public void Execute(IJobExecutionContext context)
+        {
+            //throw new NotImplementedException();
+            //txtMultiLog.Text += Environment.NewLine + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            //MessageBox.Show("", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
+
+            txtMultiLog.Invoke((MethodInvoker)delegate
+            {
+                // Running on the UI thread
+                txtMultiLog.Text += Environment.NewLine + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            });
+        }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            //exportData();
             exportSingleData();
-            //mainTimer.Start();
+
+
+            IScheduler scheduler = StdSchedulerFactory.GetDefaultScheduler();
+            scheduler.Start();
+            IJobDetail job = JobBuilder.Create<Main>().Build();
+            ITrigger trigger = TriggerBuilder.Create()
+             .StartAt(DateTime.Now)
+               .WithCronSchedule("0 0/2 * * * ?")
+               .WithPriority(1)
+               .Build();
+            scheduler.ScheduleJob(job, trigger);
+
         }
 
-        private void exportSingleData()
+        public void Add()
+        {
+            txtMultiLog.Text += Environment.NewLine +  " " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+        }
+
+        public async void exportSingleData()
         {
             //listTarget = db.ExportTargets.ToList();
             var selectedText = ((KeyValuePair<string, string>)comboBox1.SelectedItem).Value;
@@ -56,7 +100,7 @@ namespace HighLevelExport
             foreach (var item in listTarget)
             {
                 //ExecuteCaseName(item, startTime, endTime, startTimeWrite);
-                ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
+                await ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
             }
             //await Task.WhenAll(tasks);
         }
@@ -65,15 +109,11 @@ namespace HighLevelExport
             var tempListInterceptName = new List<ExportObject>();
             try
             {
-                tempListInterceptName = mainHelper.GetListInterceptName(item,connectionString);
+                tempListInterceptName = mainHelper.GetListInterceptName(item);
                 List<Task> tasks = new List<Task>();
                 foreach (var interceptNameObject in tempListInterceptName)
                 {
-                    //var index = tempListInterceptName.IndexOf(interceptNameObject);
-                    //if (index == 1)
-                    //if(interceptNameObject.InterceptName == "84901429511")
                     tasks.Add(ProcessIntercept(interceptNameObject, startTime, endTime, startTimeWrite));
-                    //ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
                 }
                 await Task.WhenAll(tasks);
                 txtMultiLog.Invoke((MethodInvoker)delegate
@@ -102,7 +142,7 @@ namespace HighLevelExport
         {
             try
             {
-                var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite,connectionString);
+                var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
                 if (finalExportList.Count() > 0)
                 {
                     WriteFile(finalExportList, startTimeWrite, interceptNameObject.CaseName, interceptNameObject.InterceptName);
@@ -112,7 +152,6 @@ namespace HighLevelExport
             {
                 txtMultiLog.Invoke((MethodInvoker)delegate
                 {
-                    // Running on the UI thread
                     txtMultiLog.Text += Environment.NewLine + "Error when export Intercept Name: " + interceptNameObject.InterceptName + ", InterceptId: " + interceptNameObject.InterceptId + "-" + ex.Message;
                 });
             }
@@ -127,7 +166,7 @@ namespace HighLevelExport
                 convertedInterceptName = convertedInterceptName.Insert(0, "0");
             }
             string initialData = "[";
-            var destinationPath = StaticKey.EXPORT_FOLDER + @"\" + casename + "-" + startTime + @"\" + convertedInterceptName;
+            var destinationPath = StaticKey.EXPORT_FOLDER + @"\" + "AP_" + casename + "_All_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName;
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";
             Directory.CreateDirectory(destinationPath);
             foreach (var itemExport in listExport)
@@ -429,16 +468,16 @@ namespace HighLevelExport
 
             var listObj = new List<CaseObject>();
 
-            listObj = mainHelper.GetListCaseObject();
+            //listObj = mainHelper.GetListCaseObject();
 
-            Dictionary<string, string> test = new Dictionary<string, string>();
-            foreach (var item in listObj)
-            {
-                test.Add(item.id, item.name);
-            }
-            comboBox1.DataSource = new BindingSource(test, null);
-            comboBox1.DisplayMember = "Value";
-            comboBox1.ValueMember = "Key";
+            //Dictionary<string, string> test = new Dictionary<string, string>();
+            //foreach (var item in listObj)
+            //{
+            //    test.Add(item.id, item.name);
+            //}
+            //comboBox1.DataSource = new BindingSource(test, null);
+            //comboBox1.DisplayMember = "Value";
+            //comboBox1.ValueMember = "Key";
         }
 
         private void btnMinimize_Click(object sender, EventArgs e)
@@ -454,6 +493,8 @@ namespace HighLevelExport
                 Application.Exit();
             }
         }
+
+        
     }
 }
 

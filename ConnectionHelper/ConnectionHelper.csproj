@@ -126,6 +126,9 @@
     <Compile Include="Models\ExportTarget.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\HotNumber.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Login.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

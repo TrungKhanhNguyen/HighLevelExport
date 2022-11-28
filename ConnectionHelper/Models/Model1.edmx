@@ -26,6 +26,13 @@
           <Property Name="TargetId" Type="nvarchar" MaxLength="200" />
           <Property Name="TargetName" Type="nvarchar" MaxLength="200" />
         </EntityType>
+        <EntityType Name="HotNumber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="Login">
           <Key>
             <PropertyRef Name="Id" />
@@ -39,6 +46,7 @@
         <EntityContainer Name="ExportHistoryModelStoreContainer">
           <EntitySet Name="ExportLog" EntityType="Self.ExportLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExportTarget" EntityType="Self.ExportTarget" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HotNumber" EntityType="Self.HotNumber" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Login" EntityType="Self.Login" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
@@ -67,6 +75,13 @@
           <Property Name="TargetId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="TargetName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="HotNumber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
         <EntityType Name="Login">
           <Key>
             <PropertyRef Name="Id" />
@@ -80,6 +95,7 @@
         <EntityContainer Name="ExportHistoryEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="ExportLogs" EntityType="Self.ExportLog" />
           <EntitySet Name="ExportTargets" EntityType="Self.ExportTarget" />
+          <EntitySet Name="HotNumbers" EntityType="Self.HotNumber" />
           <EntitySet Name="Logins" EntityType="Self.Login" />
         </EntityContainer>
       </Schema>
@@ -108,6 +124,14 @@
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="TargetId" ColumnName="TargetId" />
                 <ScalarProperty Name="TargetName" ColumnName="TargetName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HotNumbers">
+            <EntityTypeMapping TypeName="ExportHistoryModel.HotNumber">
+              <MappingFragment StoreEntitySet="HotNumber">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

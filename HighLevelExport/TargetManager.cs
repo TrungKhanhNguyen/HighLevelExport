@@ -20,6 +20,7 @@ namespace HighLevelExport
             InitializeComponent();
         }
         private DBHelper helper = new DBHelper();
+        private SQLServerHelper sqlserverHelper = new SQLServerHelper();
 
         private void btnClose_Click(object sender, EventArgs e)
         {
@@ -130,7 +131,7 @@ namespace HighLevelExport
 
         private void reloadData()
         {
-            var listData = helper.GetListExportTarget();
+            var listData = sqlserverHelper.GetListExportTarget();
             dataGridView1.DataSource = listData;
         }
 

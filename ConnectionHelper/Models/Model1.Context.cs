@@ -27,6 +27,7 @@ namespace ConnectionHelper.Models
     
         public virtual DbSet<ExportLog> ExportLogs { get; set; }
         public virtual DbSet<ExportTarget> ExportTargets { get; set; }
+        public virtual DbSet<HotNumber> HotNumbers { get; set; }
         public virtual DbSet<Login> Logins { get; set; }
     }
 }

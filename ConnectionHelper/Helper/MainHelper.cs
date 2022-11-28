@@ -51,9 +51,10 @@ namespace ConnectionHelper.Helper
         }
 
         //Lấy danh sách các Intercept theo Case name
-        public List<ExportObject> GetListInterceptName(ExportTarget item, string connectionString)
+        public List<ExportObject> GetListInterceptName(ExportTarget item)
         {
             var tempList = new List<ExportObject>();
+            string connectionString = helper.getConnectionString();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
@@ -78,10 +79,11 @@ namespace ConnectionHelper.Helper
         }
 
         //Export thông tin theo từng Intercept
-        public List<ExportObject> ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite, string connectionString)
+        public List<ExportObject> ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
         {
             //if (interceptNameObject.InterceptId != "894")
             //{
+                string connectionString = helper.getConnectionString();
                 var finalList = new List<ExportObject>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {

@@ -10,6 +10,39 @@ namespace ConnectionHelper.Helper
     public class SQLServerHelper
     {
         public ExportHistoryEntities db = new ExportHistoryEntities();
+
+        public List<HotNumber> GetAllHotNumber()
+        {
+            try
+            {
+                var listAllNumbers = db.HotNumbers.ToList();
+                return listAllNumbers;
+            }
+            catch { return new List<HotNumber>(); }
+        }
+        public void AddHotNumber(HotNumber phone)
+        {
+            try
+            {
+                db.HotNumbers.Add(phone);
+                db.SaveChanges();
+            }
+            catch { }
+        }
+
+        public bool DeleteHotNumber(string targetId)
+        {
+            try
+            {
+                var target = db.HotNumbers.Where(m => m.Id.ToString() == targetId).FirstOrDefault();
+                db.HotNumbers.Remove(target);
+                db.SaveChanges();
+                return true;
+            }
+            catch { return false; }
+        }
+
+
         public bool DeleteTarget(string targetId)
         {
             try
@@ -46,6 +79,7 @@ namespace ConnectionHelper.Helper
         {
             try
             {
+                //var alluser = db.Logins.ToList();
                 var user = db.Logins.Where(m => m.Username == username && m.Password.ToLower() == password).FirstOrDefault();
                 return user;
             }

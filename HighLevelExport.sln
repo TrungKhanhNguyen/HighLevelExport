@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionHelper", "Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebManagement", "WebManagement\WebManagement.csproj", "{835B8210-B01E-4AAA-852C-20B4568CD6BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoursExportListener", "HoursExportListener\HoursExportListener.csproj", "{66106AC1-E346-4596-9BAC-0DC0F8435F53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{835B8210-B01E-4AAA-852C-20B4568CD6BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{835B8210-B01E-4AAA-852C-20B4568CD6BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{835B8210-B01E-4AAA-852C-20B4568CD6BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66106AC1-E346-4596-9BAC-0DC0F8435F53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66106AC1-E346-4596-9BAC-0DC0F8435F53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66106AC1-E346-4596-9BAC-0DC0F8435F53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66106AC1-E346-4596-9BAC-0DC0F8435F53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

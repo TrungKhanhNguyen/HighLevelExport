@@ -20,7 +20,7 @@ namespace ConnectionHelper.Models
         public static string BSA_PASSWORD = "Ss8Inc$756";
 
         public static string MAIN_URL_FOLDER = @"Z:\";
-        public static string EXPORT_FOLDER = @"C:\Work\export";
+        public static string EXPORT_FOLDER = @"C:\Export";
 
         public static string ELASTIC_IP = "http://172.25.3.34:9200";
         public static string ELASTIC_LOCAL_IP = "http://localhost:9200/";
