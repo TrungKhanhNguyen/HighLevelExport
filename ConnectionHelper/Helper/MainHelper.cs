@@ -14,7 +14,6 @@ namespace ConnectionHelper.Helper
     {
         private DBHelper helper = new DBHelper();
 
-        //Lấy danh sách tất cả các case
         public List<CaseObject> GetListCaseObject()
         {
             string connectionString = helper.getConnectionString();
@@ -79,9 +78,9 @@ namespace ConnectionHelper.Helper
         }
 
         //Export thông tin theo từng Intercept
-        public List<ExportObject> ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
+        public List<ExportObject> ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite = "")
         {
-            //if (interceptNameObject.InterceptId != "894")
+            //if (interceptNameObject.InterceptId == "3163")
             //{
                 string connectionString = helper.getConnectionString();
                 var finalList = new List<ExportObject>();

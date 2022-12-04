@@ -15,11 +15,11 @@ namespace ConnectionHelper.Models
     public partial class ExportLog
     {
         public int Id { get; set; }
-        public string ExportTime { get; set; }
+        public Nullable<System.DateTime> ExportTime { get; set; }
         public string Status { get; set; }
         public string Messages { get; set; }
         public string CaseName { get; set; }
-        public Nullable<System.DateTime> EventTime { get; set; }
+        public string LogType { get; set; }
         public string InterceptId { get; set; }
         public string InterceptName { get; set; }
     }

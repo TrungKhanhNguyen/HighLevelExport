@@ -31,6 +31,7 @@ namespace HoursExportListener
             ITrigger trigger = TriggerBuilder.Create()
              .StartAt(DateTime.Now)
                .WithCronSchedule("10 0 0/1 * * ?")
+               //.WithCronSchedule("20 0/2 * * * ?")
                .WithPriority(1)
                .Build();
             scheduler.ScheduleJob(job, trigger);

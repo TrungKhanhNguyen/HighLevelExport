@@ -84,7 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icons8-historical-80.ico" />
-    <Content Include="icons8-sand-timer-64.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

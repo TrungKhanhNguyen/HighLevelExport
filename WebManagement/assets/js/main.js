@@ -4,6 +4,29 @@
         $('.total-target').text(totaltarget);
     }
     calculateTotalRecord();
+
+    $('#dropdownhotnumberCase').on('change', function () {
+        //alert(this.value);
+        var tempText = $(this).find("option:selected").text();
+        //console.log(tempText);
+        $.ajax({
+            type: "GET",
+            url: '/PerTwoMinutes/GetListIntercept',
+            dataType: "json",
+            data: { casename: tempText },
+            contentType: "application/json; charset=utf-8",
+            success: function (connObjReturn) {
+                $('#dropdownhotnumberIntercept').find('option').remove();
+                $.each(connObjReturn, function (index, item) {
+                    $('#dropdownhotnumberIntercept').append("<option value='" + item.InterceptId + "'>" + item.InterceptName + "</option>");
+                });
+            },
+            error: function () {
+
+            }
+        });
+    });
+
     $('.table-target tbody tr .btn-delete').each(function () {
         $(this).click(function (e) {
             var caseid = $(this).closest('tr').find('.caseId').html();

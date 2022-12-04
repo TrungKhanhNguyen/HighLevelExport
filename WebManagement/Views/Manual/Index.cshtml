@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<h2>Index</h2>
+
+<div class="panel panel-default panel-shadow panel-addtarget" data-collapsed="0">
+    <!-- to apply shadow add class "panel-shadow" -->
+    <!-- panel head -->
+    <div class="panel-heading">
+        <div class="panel-title" style="font-size: 13px;">Add case</div>
+    </div>
+
+    <!-- panel body -->
+    <div class="panel-body">
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="selectCase" class="form-label">Select Case name</label>
+
+                @Html.DropDownList("dropdownhotnumberCase", ViewBag.AllCase as SelectList, new { @class = "form-control" })
+            </div>
+
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="selectCase" class="form-label">Select intercept</label>
+
+                @Html.DropDownList("dropdownhotnumberIntercept", ViewBag.AllIntercept as SelectList, new { @class = "form-control" })
+            </div>
+
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="form-label">Select Begin time</label>
+
+                <div class="date-and-time">
+                    <input type="text" class="form-control datepicker beginDatePicker" value="@ViewBag.BeginDate" data-format="dd-mm-yyyy" >
+                    <input type="text" class="form-control timepicker beginTimePicker" data-template="dropdown" data-show-seconds="false" data-default-time="11:25 AM" data-show-meridian="false" data-minute-step="1" data-second-step="5">
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="form-label">Select End time</label>
+
+                <div class="date-and-time">
+                    <input type="text" class="form-control datepicker endDatePicker" value="@ViewBag.EndDate" data-format="dd-mm-yyyy">
+                    <input type="text" class="form-control timepicker endTimePicker" data-template="dropdown" data-show-seconds="false" data-default-time="11:25 AM" data-show-meridian="false" data-minute-step="1" data-second-step="5">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="btnAddNumber" class="form-label label-casename" style="display : block;">Add number</label>
+                <button type="button" id="btnManualAdd" class="btn btn-green btn-icon">
+                    Add number
+                    <i class="entypo-check"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#btnManualAdd').click(function () {
+            var beginDate = $('.beginDatePicker').val();
+            var beginTime = $('.beginTimePicker').val();
+            var beginValue = beginDate + " " + beginTime;
+
+            var endDate = $('.endDatePicker').val();
+            var endTime = $('.endTimePicker').val();
+            var endValue = endDate + " " + endTime;
+            console.log(beginValue);
+            console.log(endValue);
+
+            var casename = $('#dropdownhotnumberCase').find("option:selected").text();
+            var interceptname = $('#dropdownhotnumberIntercept').find("option:selected").text();
+            var interceptid = $('#dropdownhotnumberIntercept').find("option:selected").val();
+            $.ajax({
+                type: "GET",
+                url: '/Manual/ExportByTime',
+                dataType: "json",
+                data: { casename: casename, interceptname: interceptname, interceptid: interceptid, beginValue: beginValue, endValue : endValue },
+                contentType: "application/json; charset=utf-8",
+                success: function (connObjReturn) {
+                    //$('#dropdownhotnumberIntercept').find('option').remove();
+                    //$.each(connObjReturn, function (index, item) {
+                    //    $('#dropdownhotnumberIntercept').append("<option value='" + item.InterceptId + "'>" + item.InterceptName + "</option>");
+                    //});
+                },
+                error: function () {
+
+                }
+            });
+
+        });
+    });
+</script>

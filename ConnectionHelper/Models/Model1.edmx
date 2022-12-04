@@ -10,11 +10,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ExportTime" Type="nvarchar" MaxLength="100" />
+          <Property Name="ExportTime" Type="datetime" />
           <Property Name="Status" Type="nvarchar" MaxLength="50" />
           <Property Name="Messages" Type="nvarchar(max)" />
           <Property Name="CaseName" Type="nvarchar" MaxLength="200" />
-          <Property Name="EventTime" Type="datetime" />
+          <Property Name="LogType" Type="nvarchar" MaxLength="50" />
           <Property Name="InterceptId" Type="nvarchar" MaxLength="200" />
           <Property Name="InterceptName" Type="nvarchar" MaxLength="200" />
         </EntityType>
@@ -32,6 +32,8 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="CaseName" Type="nvarchar" MaxLength="200" />
+          <Property Name="InterceptId" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Login">
           <Key>
@@ -59,11 +61,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ExportTime" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ExportTime" Type="DateTime" Precision="3" />
           <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Messages" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CaseName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="EventTime" Type="DateTime" Precision="3" />
+          <Property Name="LogType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InterceptId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="InterceptName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
@@ -81,6 +83,8 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CaseName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="InterceptId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Login">
           <Key>
@@ -112,7 +116,7 @@
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Messages" ColumnName="Messages" />
                 <ScalarProperty Name="CaseName" ColumnName="CaseName" />
-                <ScalarProperty Name="EventTime" ColumnName="EventTime" />
+                <ScalarProperty Name="LogType" ColumnName="LogType" />
                 <ScalarProperty Name="InterceptId" ColumnName="InterceptId" />
                 <ScalarProperty Name="InterceptName" ColumnName="InterceptName" />
               </MappingFragment>
@@ -132,6 +136,8 @@
               <MappingFragment StoreEntitySet="HotNumber">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="CaseName" ColumnName="CaseName" />
+                <ScalarProperty Name="InterceptId" ColumnName="InterceptId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

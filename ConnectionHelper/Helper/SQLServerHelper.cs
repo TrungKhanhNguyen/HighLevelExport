@@ -30,11 +30,11 @@ namespace ConnectionHelper.Helper
             catch { }
         }
 
-        public bool DeleteHotNumber(string targetId)
+        public bool DeleteHotNumber(string casename, string interceptname)
         {
             try
             {
-                var target = db.HotNumbers.Where(m => m.Id.ToString() == targetId).FirstOrDefault();
+                var target = db.HotNumbers.Where(m => m.CaseName.ToString() == casename && m.PhoneNumber == interceptname).FirstOrDefault();
                 db.HotNumbers.Remove(target);
                 db.SaveChanges();
                 return true;
@@ -96,14 +96,26 @@ namespace ConnectionHelper.Helper
             catch { return new List<ExportTarget>(); }
 
         }
-        public void InsertLogToDB(string message, string status, string exportTime, string casename, DateTime eventTime, string interceptId, string interceptName)
+
+        public List<ExportLog> GetLogByTime(string fromDate, string toDate)
+        {
+            var listExport = new List<ExportLog>();
+            var tempFromDate = DateTime.ParseExact(fromDate, "dd-MM-yyyy H:mm",
+                                    System.Globalization.CultureInfo.InvariantCulture);
+
+            var tempToDate = DateTime.ParseExact(toDate, "dd-MM-yyyy H:mm",
+                                    System.Globalization.CultureInfo.InvariantCulture);
+            listExport = db.ExportLogs.Where(m=>m.ExportTime >= tempFromDate && m.ExportTime <=tempToDate).ToList();
+            return listExport;
+        }
+
+        public void InsertLogToDB(string message, DateTime exportTime, string casename,string logType, string interceptId, string interceptName)
         {
             var log = new ExportLog
             {
                 Messages = message,
-                Status = status,
                 CaseName = casename,
-                EventTime = eventTime,
+                LogType = logType,
                 ExportTime = exportTime,
                 InterceptId = interceptId,
                 InterceptName = interceptName

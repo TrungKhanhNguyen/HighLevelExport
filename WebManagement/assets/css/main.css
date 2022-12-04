@@ -60,7 +60,7 @@
 .total-target{
     font-weight : 600;
 }
-.alert-success-target, .alert-danger-target {
+.alert-success-target, .alert-danger-target, .alert-danger-hotnumber, .alert-success-hotnumber {
     position: fixed;
     right: -400px;
     transition: right linear 0.5s;
@@ -68,7 +68,7 @@
     width: 300px;
     bottom : 0;
 }
-    .alert-success-target.show, .alert-danger-target.show {
+    .alert-success-target.show, .alert-danger-target.show, .alert-danger-hotnumber.show, .alert-success-hotnumber.show {
         right: 20px;
     }
     .color-green{
@@ -76,4 +76,7 @@
     }
 .color-red {
     color: darkred;
+}
+.bordercolorred{
+    border-color : darkred;
 }

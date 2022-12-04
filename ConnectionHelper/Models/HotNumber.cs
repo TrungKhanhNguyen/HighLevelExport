@@ -16,5 +16,7 @@ namespace ConnectionHelper.Models
     {
         public int Id { get; set; }
         public string PhoneNumber { get; set; }
+        public string CaseName { get; set; }
+        public string InterceptId { get; set; }
     }
 }
