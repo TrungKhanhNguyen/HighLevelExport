@@ -57,8 +57,15 @@
 .table-target{
     font-size : 14px;
 }
+.table-target td, .table-hotnumber td{
+    font-size : 14px;
+    vertical-align : middle !important;
+}
 .total-target{
     font-weight : 600;
+}
+.chkActive{
+    cursor : pointer;
 }
 .alert-success-target, .alert-danger-target, .alert-danger-hotnumber, .alert-success-hotnumber {
     position: fixed;

@@ -53,7 +53,8 @@
         <tr>
             <th>Casename</th>
             <th>Phone number</th>
-            <th></th>
+            <th>Active</th>
+            <th>Amendment</th>
         </tr>
     </thead>
     <tbody>
@@ -62,11 +63,16 @@
             <tr role="row">
                 <td class="casename">@item.CaseName</td>
                 <td id="@item.PhoneNumber" class="hotintercept">@item.PhoneNumber</td>
+                <td><input type="checkbox" class="chkActive" checked="@item.Active" /></td>
                 <td>
                     @*<a href="#" class="btn btn-danger btn-sm btn-icon btn-delete icon-left">
-                        <i class="entypo-cancel"></i>
-                        Delete
-                    </a>*@
+            <i class="entypo-cancel"></i>
+            Delete
+        </a>*@
+                    <button type="button" class="btn btn-orange btn-update btn-icon">
+                        Update
+                        <i class="entypo-down"></i>
+                    </button>
                     <button type="button" class="btn btn-red btn-delete btn-icon">
                         Delete
                         <i class="entypo-cancel"></i>
@@ -77,7 +83,7 @@
     </tbody>
 </table>
 <div class="alert alert-success alert-success-hotnumber"><strong>Well done!</strong> Successfully deleted target.</div>
-    <div class="alert alert-danger alert-danger-hotnumber"><strong>Failed!!!</strong> Something wrong.</div>
+<div class="alert alert-danger alert-danger-hotnumber"><strong>Failed!!!</strong> Something wrong.</div>
 
     <div class="modal fade" id="modal-1">
         <div class="modal-dialog">
@@ -107,7 +113,40 @@
             $('.total-hotnumber').text(totaltarget);
         }
 
-        
+        $(document).on('click', '.btn-update', function (e) {
+            var casename = $(this).closest('tr').find('.casename').html();
+            var interceptname = $(this).closest('tr').find('.hotintercept').html();
+            var isActive = $(this).closest('tr').find('.chkActive').prop('checked');
+            console.log(isActive);
+            $.ajax({
+                type: "POST",
+                url: '/PerTwoMinutes/Update',
+                dataType: "json",
+                data: JSON.stringify({ number: { PhoneNumber: interceptname, Casename: casename, Active : isActive } }),
+                contentType: "application/json; charset=utf-8",
+                success: function (connObjReturn) {
+                    if (connObjReturn == true) {
+                        //console.log("1");
+                        $('.alert-success-hotnumber').html("<strong>Well done!</strong> Successfully update target.")
+                        $('.alert-success-hotnumber').addClass('show');
+                        setTimeout(function () {
+                            $('.alert-success-hotnumber').removeClass('show');
+                        }, 3000);
+                    } else {
+                        //$('.alert-danger-hotnumber').html("<strong>Failed!!!</strong> Something wrong.");
+                        $('.alert-danger-hotnumber').addClass('show');
+                        setTimeout(function () {
+                            $('.alert-danger-hotnumber').removeClass('show');
+                        }, 3000);
+                    }
+                    calculateTotalHotnumberRecord();
+                    //recountConnect();
+                },
+                error: function () {
+
+                }
+            });
+        });
 
         $(document).on('click','.btn-delete', function (e) {
             //code here ....
@@ -119,10 +158,9 @@
             console.log(casename);
             console.log(interceptname);
 
-
             $('#modal-1').modal('show');
-            $('.btn-sure-delete').click(function (f) {
-                f.preventDefault();
+            $('.btn-sure-delete').off('click').on('click', function () {
+                alert(true);
                 $('#modal-1').modal('hide');
                 $.ajax({
                     type: "POST",
@@ -132,23 +170,18 @@
                     contentType: "application/json; charset=utf-8",
                     success: function (connObjReturn) {
                         if (connObjReturn == true) {
-                            //console.log("1");
+                            $('.alert-success-hotnumber').html("<strong>Well done!</strong> Successfully delete target.")
                             $('.alert-success-hotnumber').addClass('show');
                             $this.closest('tr').remove();
                             setTimeout(function () {
                                 $('.alert-success-hotnumber').removeClass('show');
-                            }, 1500);
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1500);
+                            }, 3000);
+                            
                         } else {
                             $('.alert-danger-hotnumber').addClass('show');
                             setTimeout(function () {
                                 $('.alert-danger-hotnumber').removeClass('show');
-                            }, 1500);
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1500);
+                            }, 3000);
                         }
                         calculateTotalHotnumberRecord();
                         //recountConnect();
@@ -158,8 +191,9 @@
                     }
                 });
             });
+            
         });
-        
+
 
         $('#btnAddNumber').click(function () {
             var casename = $('#dropdownhotnumberCase').find("option:selected").text();
@@ -185,11 +219,13 @@
                         type: "POST",
                         url: '/PerTwoMinutes/AddPhoneNumber',
                         dataType: "json",
-                        data: JSON.stringify({ phone: { PhoneNumber: interceptname, Casename: casename, InterceptId: interceptid } }),
-                        //data: { id: dropValue, name: dropText },
+                        data: JSON.stringify({ phone: { PhoneNumber: interceptname, Casename: casename, InterceptId: interceptid, Active : true } }),
                         contentType: "application/json; charset=utf-8",
                         success: function (connObjReturn) {
-                            $('.table-hotnumber tbody').append("<tr role='row'><td class='casename'>" + casename + "</td><td id='" + interceptname + "' class='hotintercept'>" + interceptname + "</td><td><button type='button' class='btn btn-red btn-delete btn-icon'>Delete<i class='entypo-cancel'></i></button></td></tr>");
+                            $('.table-hotnumber tbody').append("<tr role='row'><td class='casename'>" + casename +
+                                "</td><td id='" + interceptname + "' class='hotintercept'>" + interceptname +
+                                "</td><td><input type='checkbox' class='chkActive' checked='checked' /></td>" +
+                                "<td><button type='button' class='btn btn-orange btn-update btn-icon'>Update<i class='entypo-down'></i></button> <button type='button' class='btn btn-red btn-delete btn-icon'>Delete<i class='entypo-cancel'></i></button></td></tr>");
                             $('.hotnumber_add_success').removeClass('hide');
                             setTimeout(function () {
                                 $('.hotnumber_add_success').addClass('hide');
@@ -208,7 +244,7 @@
                     }, 3000);
                 }
             }
-            
+
         });
     });
     </script>

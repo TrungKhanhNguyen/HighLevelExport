@@ -6,9 +6,7 @@
     calculateTotalRecord();
 
     $('#dropdownhotnumberCase').on('change', function () {
-        //alert(this.value);
         var tempText = $(this).find("option:selected").text();
-        //console.log(tempText);
         $.ajax({
             type: "GET",
             url: '/PerTwoMinutes/GetListIntercept',
@@ -27,13 +25,44 @@
         });
     });
 
+    $(document).on('click', '.btn-update', function () {
+        var casename = $(this).closest('tr').find('.casename').html();
+        var caseid = $(this).closest('tr').find('.caseId').html();
+        var isActive = $(this).closest('tr').find('.chkActive').prop('checked');
+        console.log(isActive);
+        $.ajax({
+            type: "POST",
+            url: '/Home/Update',
+            dataType: "json",
+            data: JSON.stringify({ target: { TargetId: caseid, TargetName: casename, Active: isActive } }),
+            contentType: "application/json; charset=utf-8",
+            success: function (connObjReturn) {
+                if (connObjReturn == true) {
+                    $('.alert-success-target').html("<strong>Well done!</strong> Successfully update target.")
+                    $('.alert-success-target').addClass('show');
+                    setTimeout(function () {
+                        $('.alert-success-target').removeClass('show');
+                    }, 3000);
+                } else {
+                    $('.alert-danger-target').addClass('show');
+                    setTimeout(function () {
+                        $('.alert-danger-target').removeClass('show');
+                    }, 3000);
+                }
+            },
+            error: function () {
+
+            }
+        });
+    });
+
     $('.table-target tbody tr .btn-delete').each(function () {
         $(this).click(function (e) {
             var caseid = $(this).closest('tr').find('.caseId').html();
             var $this = $(this);
 
             $('#modal-1').modal('show');
-            $('.btn-sure-delete').click(function () {
+            $('.btn-sure-delete').off('click').on('click', function () {
                 $('#modal-1').modal('hide');
                 $.ajax({
                     type: "GET",
@@ -48,18 +77,14 @@
                             $this.closest('tr').remove();
                             setTimeout(function () {
                                 $('.alert-success-target').removeClass('show');
-                            }, 5000);
-                            
+                            }, 3000);
                         } else {
                             $('.alert-danger-target').addClass('show');
                             setTimeout(function () {
                                 $('.alert-danger-target').removeClass('show');
-                            }, 5000);
-                            //console.log("2");
+                            }, 3000);
                         }
                         calculateTotalRecord();
-
-                        //recountConnect();
                     },
                     error: function () {
 
@@ -70,6 +95,8 @@
            
         });
     });
+
+
 
     $('#btnAddTarget').click(function () {
         var dropValue = $('#dropdownCase').val();
@@ -91,7 +118,7 @@
                 type: "POST",
                 url: '/Home/AddTarget',
                 dataType: "json",
-                data: JSON.stringify({ target: { TargetId: dropValue, TargetName: dropText } }),
+                data: JSON.stringify({ target: { TargetId: dropValue, TargetName: dropText, Active : true } }),
                 //data: { id: dropValue, name: dropText },
                 contentType: "application/json; charset=utf-8",
                 success: function (connObjReturn) {
@@ -100,7 +127,10 @@
                         setTimeout(function () {
                             $('.target_add_success').addClass('hide');
                         }, 5000);
-                        $('.table-target tbody').append("<tr role='row'><td class='caseId' id='"+dropValue+"'>" + dropValue + "</td><td>" + dropText + "</td><td><a href='javascript:;' class='btn btn-danger btn-sm btn-icon btn-delete icon-left'><i class='entypo-cancel'></i>Delete</a></td></tr>");
+                        $('.table-target tbody').append("<tr role='row'><td class='caseId' id='" + dropValue + "'>" + dropValue + "</td><td class='casename'>" + dropText +
+                            "</td><td><input type='checkbox' class='chkActive' checked='checked' /></td>"+
+                            "<td><button type='button' class='btn btn-orange btn-update btn-icon'>Update<i class='entypo-down'></i></button>" +
+                            "<button type='button' class='btn btn-red btn-delete btn-icon'>Delete<i class='entypo-cancel'></i></button></td></tr>");
                         calculateTotalRecord();
                     } else {
                         $('.target_add_fail').html('Failed! Cannot add target!');
@@ -109,9 +139,6 @@
                             $('.target_add_fail').addClass('hide');
                         }, 5000);
                     }
-                    
-
-                    //recountConnect();
                 },
                 error: function () {
                 }

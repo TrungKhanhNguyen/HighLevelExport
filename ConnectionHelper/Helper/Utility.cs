@@ -12,6 +12,7 @@ namespace ConnectionHelper.Helper
 {
     public class Utility
     {
+        private SQLServerHelper sqlHelper = new SQLServerHelper();
         public LatLonObject getLatLonFromString(string latlon)
         {
             var lat = "";
@@ -208,7 +209,16 @@ namespace ConnectionHelper.Helper
             if (absoluteUrl.IndexOf(".wav") > -1)
             {
                 if (!File.Exists(destinationFullUrl))
-                    File.Copy(absoluteUrl, destinationFullUrl, false);
+                {
+                    try
+                    {
+                        File.Copy(absoluteUrl, destinationFullUrl, false);
+                    }
+                    catch {
+                        sqlHelper.InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
+                    }
+                }
+                    
             }
 
             var tempCalledPartyNumber = exportObject.call_direction == "1" ? callee : caller;

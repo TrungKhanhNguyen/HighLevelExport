@@ -18,5 +18,6 @@ namespace ConnectionHelper.Models
         public string PhoneNumber { get; set; }
         public string CaseName { get; set; }
         public string InterceptId { get; set; }
+        public Nullable<bool> Active { get; set; }
     }
 }

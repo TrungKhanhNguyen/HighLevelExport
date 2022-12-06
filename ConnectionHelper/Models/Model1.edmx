@@ -25,6 +25,15 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TargetId" Type="nvarchar" MaxLength="200" />
           <Property Name="TargetName" Type="nvarchar" MaxLength="200" />
+          <Property Name="Active" Type="bit" />
+        </EntityType>
+        <EntityType Name="HI3Retrieve">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SourcePath" Type="nvarchar(max)" />
+          <Property Name="DestinationPath" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="HotNumber">
           <Key>
@@ -34,6 +43,7 @@
           <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="CaseName" Type="nvarchar" MaxLength="200" />
           <Property Name="InterceptId" Type="nvarchar" MaxLength="50" />
+          <Property Name="Active" Type="bit" />
         </EntityType>
         <EntityType Name="Login">
           <Key>
@@ -48,6 +58,7 @@
         <EntityContainer Name="ExportHistoryModelStoreContainer">
           <EntitySet Name="ExportLog" EntityType="Self.ExportLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExportTarget" EntityType="Self.ExportTarget" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HI3Retrieve" EntityType="Self.HI3Retrieve" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HotNumber" EntityType="Self.HotNumber" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Login" EntityType="Self.Login" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -76,6 +87,15 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TargetId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="TargetName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="HI3Retrieve">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SourcePath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DestinationPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="HotNumber">
           <Key>
@@ -85,6 +105,7 @@
           <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="CaseName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="InterceptId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" />
         </EntityType>
         <EntityType Name="Login">
           <Key>
@@ -99,6 +120,7 @@
         <EntityContainer Name="ExportHistoryEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="ExportLogs" EntityType="Self.ExportLog" />
           <EntitySet Name="ExportTargets" EntityType="Self.ExportTarget" />
+          <EntitySet Name="HI3Retrieve" EntityType="Self.HI3Retrieve" />
           <EntitySet Name="HotNumbers" EntityType="Self.HotNumber" />
           <EntitySet Name="Logins" EntityType="Self.Login" />
         </EntityContainer>
@@ -128,6 +150,16 @@
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="TargetId" ColumnName="TargetId" />
                 <ScalarProperty Name="TargetName" ColumnName="TargetName" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HI3Retrieve">
+            <EntityTypeMapping TypeName="ExportHistoryModel.HI3Retrieve">
+              <MappingFragment StoreEntitySet="HI3Retrieve">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SourcePath" ColumnName="SourcePath" />
+                <ScalarProperty Name="DestinationPath" ColumnName="DestinationPath" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -138,6 +170,7 @@
                 <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
                 <ScalarProperty Name="CaseName" ColumnName="CaseName" />
                 <ScalarProperty Name="InterceptId" ColumnName="InterceptId" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

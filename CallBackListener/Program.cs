@@ -12,27 +12,32 @@ namespace CallBackListener
 {
     internal class Program
     {
-        private DBHelper helper = new DBHelper();
-        private MainHelper mainHelper = new MainHelper();
-        private SQLServerHelper sqlserverHelper = new SQLServerHelper();
-        private Utility utility = new Utility();
-        void Main(string[] args)
+        //private DBHelper helper = new DBHelper();
+        //private MainHelper mainHelper = new MainHelper();
+        //private SQLServerHelper sqlserverHelper = new SQLServerHelper();
+        //private Utility utility = new Utility();
+        static void Main(string[] args)
         {
             IHubProxy hub;
 
-            var url = StaticKey.SIGNALR_LOCAL_IP;
+            var url = StaticKey.SIGNALR_IP;
             var Connection = new HubConnection(url, useDefaultUrl: false);
             hub = Connection.CreateHubProxy("ServiceStatusHub");
             Connection.Start().Wait();
 
+            Console.WriteLine("Waiting for new export command...");
+
             hub.On<string>("acknowledgeMessage", (message) =>
             {
-                Console.WriteLine( DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") +  "[INFO] Received callback export - " + message);
+                Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") +  "[INFO] Received callback export - " + message);
                 ExportData(message);
+                Console.WriteLine("Waiting for new export command...");
             });
+            //Console.WriteLine("Waiting for new export command...");
+            Console.ReadKey();
         }
 
-        private void ExportData(string message)
+        private static void ExportData(string message)
         {
             try
             {
@@ -51,9 +56,12 @@ namespace CallBackListener
                     var endDate = DateTime.ParseExact(endvalue, "dd-MM-yyyy HH:mm",
                                            System.Globalization.CultureInfo.InvariantCulture);
 
+                    var tempBegin = beginDate.AddHours(-7).ToString("yyyy-MM-ddTHH:mm:00Z");
+                    var tempEnd = endDate.AddHours(-7).ToString("yyyy-MM-ddTHH:mm:00Z");
+
                     var startTimeWrite = beginDate.ToString("yyyy-MM-dd HH-mm");
                     var tempTarget = new ExportObject { InterceptId = interceptid, InterceptName = interceptname, CaseName = casename };
-                    ExecuteInterceptName(tempTarget, beginvalue, endvalue, startTimeWrite);
+                    ExecuteInterceptName(tempTarget, tempBegin, tempEnd, startTimeWrite);
                 }
             }
             catch (Exception ex)
@@ -62,10 +70,11 @@ namespace CallBackListener
             }
             
         }
-        private void ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
+        private static void ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
         {
             try
             {
+                MainHelper mainHelper = new MainHelper();
                 var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
                 if (finalExportList.Count() > 0)
                 {
@@ -76,13 +85,15 @@ namespace CallBackListener
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName);
-                sqlserverHelper.InsertLogToDB("Error when export Intercept name " + interceptNameObject.InterceptName, DateTime.Now, interceptNameObject.CaseName, ErrorType.MinuteError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message);
+                SQLServerHelper sqlserverHelper = new SQLServerHelper();
+                sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName, ErrorType.CallbackError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
             }
         }
 
-        private void WriteCallBackFile(List<ExportObject> listExport, string startTime, string casename, string interceptname)
+        private static void WriteCallBackFile(List<ExportObject> listExport, string startTime, string casename, string interceptname)
         {
+            Utility utility = new Utility();
             var convertedInterceptName = "";
             if (interceptname.Substring(0, 2) == "84")
             {
@@ -90,7 +101,7 @@ namespace CallBackListener
                 convertedInterceptName = convertedInterceptName.Insert(0, "0");
             }
             string initialData = "[";
-            var destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
+            var destinationPath = StaticKey.EXPORT_MANUAL_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";
             Directory.CreateDirectory(destinationPath);
             foreach (var itemExport in listExport)

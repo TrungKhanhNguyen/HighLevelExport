@@ -70,7 +70,7 @@ namespace MinutesExportListener
             catch (Exception ex)
             {
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName);
-                sqlserverHelper.InsertLogToDB("Error when export Intercept name " + interceptNameObject.InterceptName, DateTime.Now, interceptNameObject.CaseName, ErrorType.MinuteError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
+                sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName, ErrorType.MinuteError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
             }
         }
 

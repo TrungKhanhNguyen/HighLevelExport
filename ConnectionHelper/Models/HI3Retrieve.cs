@@ -12,11 +12,10 @@ namespace ConnectionHelper.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ExportTarget
+    public partial class HI3Retrieve
     {
         public int Id { get; set; }
-        public string TargetId { get; set; }
-        public string TargetName { get; set; }
-        public Nullable<bool> Active { get; set; }
+        public string SourcePath { get; set; }
+        public string DestinationPath { get; set; }
     }
 }

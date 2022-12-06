@@ -1,6 +1,7 @@
 ﻿using ConnectionHelper.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,31 @@ namespace ConnectionHelper.Helper
             catch { return false; }
         }
 
+        public bool UpdateHotNumber(string casename, string interceptname, bool isActive)
+        {
+            try
+            {
+                var tempTarget = db.HotNumbers.Where(m=>m.CaseName == casename && m.PhoneNumber == interceptname).FirstOrDefault();
+                tempTarget.Active = isActive;
+                db.HotNumbers.AddOrUpdate(tempTarget);
+                db.SaveChanges();
+                return true;
+            }
+            catch { return false; }
+        }
+
+        public bool UpdateTarget(string casename, string caseId, bool isActive)
+        {
+            try
+            {
+                var tempTarget = db.ExportTargets.Where(m => m.TargetName == casename).FirstOrDefault();
+                tempTarget.Active = isActive;
+                db.ExportTargets.AddOrUpdate(tempTarget);
+                db.SaveChanges();
+                return true;
+            }
+            catch { return false; }
+        }
 
         public bool DeleteTarget(string targetId)
         {
@@ -121,6 +147,25 @@ namespace ConnectionHelper.Helper
                 InterceptName = interceptName
             };
             db.ExportLogs.Add(log);
+            db.SaveChanges();
+        }
+
+        public void InsertHI3ToRetrieve(string source, string destination )
+        {
+            var hi3 = new HI3Retrieve { DestinationPath = destination, SourcePath = source };
+            db.HI3Retrieve.Add(hi3);
+            db.SaveChanges();
+        }
+
+        public List<HI3Retrieve> GetListHI3Retrieve()
+        {
+            var tempList = db.HI3Retrieve.ToList();
+            return tempList;
+        }
+
+        public void DeleteHI3Range(List<HI3Retrieve> listData)
+        {
+            db.HI3Retrieve.RemoveRange(listData);
             db.SaveChanges();
         }
     }

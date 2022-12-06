@@ -35,6 +35,13 @@ namespace WebManagement.Controllers
                 
         }
         [HttpPost]
+        public ActionResult Update(ExportTarget target)
+        {
+            var response = sqlserverHelper.UpdateTarget(target.TargetName, target.TargetId, Convert.ToBoolean(target.Active));
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public ActionResult AddTarget(ExportTarget target)
         {
             try
