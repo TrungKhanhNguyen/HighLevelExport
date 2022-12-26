@@ -210,13 +210,7 @@ namespace ConnectionHelper.Helper
             {
                 if (!File.Exists(destinationFullUrl))
                 {
-                    try
-                    {
-                        File.Copy(absoluteUrl, destinationFullUrl, false);
-                    }
-                    catch {
-                        sqlHelper.InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
-                    }
+                    File.Copy(absoluteUrl, destinationFullUrl, false);
                 }
                     
             }
@@ -266,7 +260,7 @@ namespace ConnectionHelper.Helper
                 type = "VOICE",
                 sequence = "",
                 displayDate = exportObject.eventDate.ToString("dd/MM/yyyy HH.mm.ss"),
-                length = exportObject.call_conversationDuration,
+                length = exportObject.call_conversationDuration + "000",
                 network = getNetworkByIMSI(exportObject.call_participant_imsi),
                 direction = exportObject.call_direction == "1" ? "IN" : "OUT",
                 normCin = tempNormCin,

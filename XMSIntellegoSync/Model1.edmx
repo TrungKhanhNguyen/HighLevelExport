@@ -27,9 +27,9 @@
           <Property Name="Status" Type="nvarchar" MaxLength="50" />
           <Property Name="Messages" Type="nvarchar(max)" />
           <Property Name="CaseName" Type="nvarchar" MaxLength="200" />
-          <Property Name="LogType" Type="nvarchar" MaxLength="50" />
           <Property Name="InterceptId" Type="nvarchar" MaxLength="200" />
           <Property Name="InterceptName" Type="nvarchar" MaxLength="200" />
+          <Property Name="LogType" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ExportTarget">
           <Key>
@@ -103,9 +103,9 @@
           <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Messages" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CaseName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="LogType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="InterceptId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="InterceptName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="LogType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ExportTarget">
           <Key>
@@ -180,9 +180,9 @@
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Messages" ColumnName="Messages" />
                 <ScalarProperty Name="CaseName" ColumnName="CaseName" />
-                <ScalarProperty Name="LogType" ColumnName="LogType" />
                 <ScalarProperty Name="InterceptId" ColumnName="InterceptId" />
                 <ScalarProperty Name="InterceptName" ColumnName="InterceptName" />
+                <ScalarProperty Name="LogType" ColumnName="LogType" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

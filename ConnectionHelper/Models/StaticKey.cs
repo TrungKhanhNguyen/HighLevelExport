@@ -39,6 +39,13 @@ namespace ConnectionHelper.Models
         Info = 3
     }
 
+    public enum ReExportType
+    {
+        Hour = 0,
+        Minute = 1,
+        Callback = 2,
+    }
+
     public enum ErrorType
     {
         HourError = 0,

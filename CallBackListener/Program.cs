@@ -75,7 +75,7 @@ namespace CallBackListener
             try
             {
                 MainHelper mainHelper = new MainHelper();
-                var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
+                var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite, ReExportType.Callback.ToString());
                 if (finalExportList.Count() > 0)
                 {
                     WriteCallBackFile(finalExportList, startTimeWrite, interceptNameObject.CaseName, interceptNameObject.InterceptName);
@@ -99,6 +99,10 @@ namespace CallBackListener
             {
                 convertedInterceptName = interceptname.Remove(0, 2);
                 convertedInterceptName = convertedInterceptName.Insert(0, "0");
+            }
+            else
+            {
+                convertedInterceptName = interceptname;
             }
             string initialData = "[";
             var destinationPath = StaticKey.EXPORT_MANUAL_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;

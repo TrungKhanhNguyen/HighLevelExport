@@ -2,6 +2,7 @@
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,7 @@ namespace HI3CopyListener
                .WithPriority(1)
                .Build();
             scheduler.ScheduleJob(job, trigger);
+
         }
     }
 }

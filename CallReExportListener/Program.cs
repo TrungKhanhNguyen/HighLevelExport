@@ -6,16 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinutesExportListener
+namespace CallReExportListener
 {
     internal class Program
     {
         static void Main(string[] args)
         {
             Console.WriteLine("\r\n");
-            Console.WriteLine("===============================================================================================");
-            Console.WriteLine("*********************************Start export data every 2 minutes ********************************");
-            Console.WriteLine("===============================================================================================");
+            Console.WriteLine("=======================================================================================================");
+            Console.WriteLine("**********************************Start Re-Export call data every 5 hour********************************");
+            Console.WriteLine("=======================================================================================================");
             Console.WriteLine("\r\n");
             //Console.WriteLine("Start simple job");
 
@@ -26,8 +26,8 @@ namespace MinutesExportListener
             IJobDetail job = JobBuilder.Create<MainJob>().Build();
             ITrigger trigger = TriggerBuilder.Create()
              .StartAt(DateTime.Now)
-               //.WithCronSchedule("10 0 0/1 * * ?")
-               .WithCronSchedule("20 0/14 * * * ?")
+               //.WithCronSchedule("20 5 0/1 * * ?")
+               .WithCronSchedule("20 0/3 * * * ?")
                .WithPriority(1)
                .Build();
             scheduler.ScheduleJob(job, trigger);

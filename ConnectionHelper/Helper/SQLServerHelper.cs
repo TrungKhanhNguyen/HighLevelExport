@@ -16,7 +16,7 @@ namespace ConnectionHelper.Helper
         {
             try
             {
-                var listAllNumbers = db.HotNumbers.ToList();
+                var listAllNumbers = db.HotNumbers.Where(m=>m.Active == true).ToList();
                 return listAllNumbers;
             }
             catch { return new List<HotNumber>(); }
@@ -116,7 +116,7 @@ namespace ConnectionHelper.Helper
         {
             try
             {
-                var listAllTarget = db.ExportTargets.ToList();
+                var listAllTarget = db.ExportTargets.Where(m=>m.Active == true).ToList();
                 return listAllTarget;
             }
             catch { return new List<ExportTarget>(); }
@@ -167,6 +167,44 @@ namespace ConnectionHelper.Helper
         {
             db.HI3Retrieve.RemoveRange(listData);
             db.SaveChanges();
+        }
+
+        public void InsertToReExport(string casename, string interceptname, string interceptid, string elasticid, DateTime eventDate, string type, string writeTime)
+        {
+            var checkitem = db.CallReExports.Where(m => m.Casename == casename && m.InterceptName == interceptname && m.ElasticId == elasticid && m.InterceptId == interceptid &&
+            m.EventDate == eventDate && m.Type == type && m.WriteTime == writeTime).FirstOrDefault();
+            if(checkitem != null)
+            {
+                var item = new CallReExport
+                {
+                    Casename = casename,
+                    ElasticId = elasticid,
+                    EventDate = eventDate,
+                    InterceptId = interceptid,
+                    InterceptName = interceptname,
+                    Type = type,
+                    WriteTime = writeTime
+                };
+                db.CallReExports.Add(item);
+                db.SaveChanges();
+            }
+        }
+
+        public List<CallReExport> GetListCallReExport()
+        {
+            var tempList = new List<CallReExport>();
+            tempList = db.CallReExports.ToList();
+            return tempList;
+        }
+
+        public void DeleteCallReExport(int id)
+        {
+            var tempItem = db.CallReExports.Where(m => m.Id == id).FirstOrDefault();
+            if(tempItem != null)
+            {
+                db.CallReExports.Remove(tempItem);
+                db.SaveChanges();
+            }
         }
     }
 }

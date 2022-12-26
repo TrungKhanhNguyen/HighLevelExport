@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ConnectionHelper.Models
+namespace XMSIntellegoSync
 {
     using System;
     using System.Data.Entity;

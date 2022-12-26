@@ -119,6 +119,9 @@
     <Compile Include="Helper\MainHelper.cs" />
     <Compile Include="Helper\SQLServerHelper.cs" />
     <Compile Include="Helper\Utility.cs" />
+    <Compile Include="Models\CallReExport.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\CaseObject.cs" />
     <Compile Include="Models\ElasticObject.cs" />
     <Compile Include="Models\ExportLocation.cs" />

@@ -16,33 +16,33 @@ namespace HI3CopyListener
         private SQLServerHelper sqlServerHelper = new SQLServerHelper();
         public void RetrieveData()
         {
-            //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "[INFO] Starting new copy session... ");
             try
             {
                 var listData = sqlServerHelper.GetListHI3Retrieve();
                 var listDelete = new List<HI3Retrieve>();
-                if(listData != null)
+                if(listData.Count() > 0)
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[INFO] Starting new copy session... ");
                 foreach (var item in listData)
                 {
-
                     try
                     {
-                        File.Copy(item.SourcePath, item.DestinationPath, false);
+                        var lastindex = item.DestinationPath.LastIndexOf(@"\");
+                        var destinationFolder = item.DestinationPath.Substring(0, lastindex);
+                        Directory.CreateDirectory(destinationFolder);
+
+                        File.Copy(item.SourcePath, item.DestinationPath, true);
                         listDelete.Add(item);
                         Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[DONE] Copy from " + item.SourcePath + " to " + item.DestinationPath);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[ERROR] Failed when copy " + item.SourcePath);
-                        //sqlServerHelper.InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[ERROR] Failed when copy " + item.SourcePath + " " + ex.Message);
                     }
                 }
                 if(listDelete.Count() > 0)
                 {
                     sqlServerHelper.DeleteHI3Range(listDelete);
                 }
-
             }
             catch (Exception ex)
             {

@@ -28,7 +28,7 @@ namespace MinutesExportListener
             listNumber = sqlserverHelper.GetAllHotNumber();
 
             var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
-            //var currentTime = new DateTime(DateTime.Now.Year, 09, 15, 15, 06, 00);
+            //var currentTime = new DateTime(DateTime.Now.Year, 12, 7, 10, 12, 00);
 
             var startTime = (currentTime).AddHours(-7).AddMinutes(-2).ToString("yyyy-MM-ddTHH:mm:ssZ");
             var endTime = (currentTime).AddHours(-7).ToString("yyyy-MM-ddTHH:mm:ssZ");
@@ -59,7 +59,7 @@ namespace MinutesExportListener
         {
             try
             {
-                var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
+                var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite,ReExportType.Minute.ToString());
                 if (finalExportList.Count() > 0)
                 {
                     Write2MinsFile(finalExportList, startTimeWrite, interceptNameObject.CaseName, interceptNameObject.InterceptName);
@@ -69,7 +69,7 @@ namespace MinutesExportListener
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName);
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message);
                 sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName, ErrorType.MinuteError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
             }
         }
@@ -81,6 +81,10 @@ namespace MinutesExportListener
             {
                 convertedInterceptName = interceptname.Remove(0, 2);
                 convertedInterceptName = convertedInterceptName.Insert(0, "0");
+            }
+            else
+            {
+                convertedInterceptName = interceptname;
             }
             string initialData = "[";
             var destinationPath = StaticKey.EXPORT_2MINS_FOLDER +  @"\AP_" + casename + "_2MINS_" + convertedInterceptName + "_" + startTime;
@@ -97,7 +101,26 @@ namespace MinutesExportListener
                     if (itemExport.call_type == "4")
                         initialData += utility.getSMSJsonString(itemExport) + ",";
                     else
-                        initialData += utility.getCallJsonString(itemExport, destinationPath) + ",";
+                    {
+                        try
+                        {
+                            initialData += utility.getCallJsonString(itemExport, destinationPath) + ",";
+                        }
+                        catch (Exception ex)
+                        {
+                            var url = itemExport.call_product_url;
+                            var subUrl = url.Replace("file://var/intellego/", "").Replace("/", @"\");
+                            var absoluteUrl = StaticKey.MAIN_URL_FOLDER + subUrl.Trim();
+
+                            var fileName = utility.getHI3FilenameFromUrl(itemExport.call_product_url);
+                            var destinationFullUrl = destinationPath + @"\" + fileName;
+
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when copy file, " + ex.Message);
+                            sqlserverHelper.InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
+
+                        }
+                    }
+                        
                 }
             }
             initialData += "]";
