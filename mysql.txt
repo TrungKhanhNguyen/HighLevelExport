@@ -1,0 +1,8 @@
+
+update intercept set provinceName = 'DIENBIEN' where id = '2621';
+INSERT INTO case_intercept (intercept, case_intercept.case)
+SELECT * FROM (SELECT '9056' AS intercept, '273' AS 'case') AS temp
+WHERE NOT EXISTS (
+    SELECT intercept, case_intercept.case FROM case_intercept WHERE intercept = '9056' AND case_intercept.case = '273'
+) LIMIT 1;
+
