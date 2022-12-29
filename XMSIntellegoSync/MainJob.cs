@@ -21,13 +21,13 @@ namespace XMSIntellegoSync
 
         public void SyncData()
         {
-            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 00, 00);
-            //var currentTime = new DateTime(DateTime.Now.Year, 12, 07, 11, 00, 00);
+            //var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 00, 00);
+            var currentTime = new DateTime(DateTime.Now.Year, 12, 28, 15, 00, 00);
 
-            var startTime = (currentTime).AddHours(-8).ToString("yyyy-MM-dd HH:mm:ss");
-            var endTime = (currentTime).AddHours(-7).ToString("yyyy-MM-dd HH:mm:ss");
+            var startTime = (currentTime).AddHours(-1).ToString("yyyy-MM-dd HH:mm:ss");
+            var endTime = (currentTime).ToString("yyyy-MM-dd HH:mm:ss");
 
-            syncNewData(startTime, endTime);
+            //syncNewData(startTime, endTime);
 
             syncUpdatedData(startTime, endTime);
         }
@@ -101,7 +101,7 @@ namespace XMSIntellegoSync
 
                         foreach (var item in listObject)
                         {
-                            string sql = "Update intellego.intercept, target SET intercept.expiration_date = '" + item.STOPDATETIME + "' , intercept.description = '" + item.NAME + "', intercept.interceptType = 'CC', target.servid = '" + item.OPTIONVALUE + "' where intercept.name = '" + item.InterceptName + "' and intercept.id='" + item.InterceptId + "';";
+                            string sql = "Update intellego.intercept SET intercept.expiration_date = '" + item.STOPDATETIME + "' , intercept.description = '" + item.NAME + "', intercept.interceptType = 'CC' where intercept.name = '" + item.InterceptName +"';";
                             var cmd = new MySqlCommand(sql, connection);
                             cmd.ExecuteNonQuery();
 
@@ -134,10 +134,10 @@ namespace XMSIntellegoSync
                 string xcpconnectionString = helper.getXCDBConnectionString();
                 //var fromDate = DateTime.Now;
                 var listObject = new List<NewSyncObject>();
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                using (MySqlConnection xcpconnection = new MySqlConnection(xcpconnectionString))
                 {
-                    connection.Open();
-                    using (MySqlCommand cmd = helper.getListUpdatedIntercept(connection, startTime, endTime))
+                    xcpconnection.Open();
+                    using (MySqlCommand cmd = helper.getListUpdatedIntercept(xcpconnection, startTime, endTime))
                     {
                         using (MySqlDataReader rdr = cmd.ExecuteReader())
                         {
@@ -150,7 +150,6 @@ namespace XMSIntellegoSync
                                 var mod_ts = rdr.GetString(4);
                                 var state = rdr.GetString(5);
                                 var tempDate = stopdatetime.Replace('T', ' ').Replace('Z', ' ');
-
                                 var tempObj = new NewSyncObject
                                 {
                                     CASEID = caseid,
@@ -164,7 +163,10 @@ namespace XMSIntellegoSync
                             }
                         }
                     }
-
+                }
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
                     //lấy thông tin InterceptId của từng Intercept
                     using (MySqlCommand command = helper.getListInterceptIdByName(connection, listObject))
                     {
@@ -199,10 +201,11 @@ namespace XMSIntellegoSync
                                 UpdateProvinceData(connection, interceptid, caseid, provinceName);
                             }
                         }
-                        catch (Exception ex) {
+                        catch (Exception ex)
+                        {
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE DATA " + startTime + " to " + endTime + " , Active intercept: " + item.CASEID + ex.Message);
                         }
-                        
+
                     }
 
                     var listInactiveObject = listObject.Where(m => m.STATE == "INACTIVE").ToList();
@@ -223,13 +226,15 @@ namespace XMSIntellegoSync
                                 cmd.ExecuteNonQuery();
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE DATA " + startTime + " to " + endTime + " , Inactive intercept: " + item.CASEID + ex.Message);
                         }
-                        
+
                     }
                 }
+                
+                
             }
             catch (Exception ex)
             {

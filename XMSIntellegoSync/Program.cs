@@ -29,7 +29,7 @@ namespace XMSIntellegoSync
             IJobDetail job = JobBuilder.Create<MainJob>().Build();
             ITrigger trigger = TriggerBuilder.Create()
              .StartAt(DateTime.Now)
-               .WithCronSchedule("20 48 0/1 * * ?")
+               .WithCronSchedule("10 1 0/1 * * ?")
                //.WithCronSchedule("20 0/2 * * * ?")
                .WithPriority(1)
                .Build();

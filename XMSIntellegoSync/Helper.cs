@@ -72,7 +72,7 @@ namespace XMSIntellegoSync
         //update thông tin trên Xcipio với STATE = ACTIVE
         public MySqlCommand updateActiveRecordOnXcipio(MySqlConnection connection,string name,string optionvalue, string CASEID)
         {
-            string sql = "Update intercept, target SET intercept.expiration_date = current_timestamp(), intercept.description = '"+ name+"', intercept.interceptType = 'CC', target.servid = '"+ optionvalue +"' where intercept.name = '"+CASEID+"' and intercept.id=target.intercept ;";
+            string sql = "Update intercept SET intercept.expiration_date = current_timestamp(), intercept.description = '"+ name+"', intercept.interceptType = 'CC' where intercept.name = '"+CASEID+"';";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }
