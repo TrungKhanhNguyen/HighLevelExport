@@ -21,13 +21,14 @@ namespace XMSIntellegoSync
 
         public void SyncData()
         {
-            //var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 00, 00);
-            var currentTime = new DateTime(DateTime.Now.Year, 12, 28, 15, 00, 00);
+            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 00, 00);
+            //var currentTime = new DateTime(2022, 12, 31, 23, 00, 00);
+            //var xxTime = new DateTime(2022, 12, 31, 23, 59, 59);
 
             var startTime = (currentTime).AddHours(-1).ToString("yyyy-MM-dd HH:mm:ss");
             var endTime = (currentTime).ToString("yyyy-MM-dd HH:mm:ss");
 
-            //syncNewData(startTime, endTime);
+            syncNewData(startTime, endTime);
 
             syncUpdatedData(startTime, endTime);
         }
@@ -199,11 +200,12 @@ namespace XMSIntellegoSync
                                 var interceptid = item.InterceptId;
                                 var caseid = tempDiaphuong.TargetId;
                                 UpdateProvinceData(connection, interceptid, caseid, provinceName);
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced ACTIVE data " + item.CASEID);
                             }
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE DATA " + startTime + " to " + endTime + " , Active intercept: " + item.CASEID + ex.Message);
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Active intercept: " + item.CASEID + ex.Message);
                         }
 
                     }
@@ -225,10 +227,11 @@ namespace XMSIntellegoSync
                                 var cmd = helper.updateInterceptSuspendedTime(connection, item.InterceptId);
                                 cmd.ExecuteNonQuery();
                             }
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced INACTIVE data " + item.InterceptName );
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE DATA " + startTime + " to " + endTime + " , Inactive intercept: " + item.CASEID + ex.Message);
+                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Inactive intercept: " + item.CASEID + ex.Message);
                         }
 
                     }
