@@ -55,7 +55,8 @@ namespace XMSIntellegoSync
             }
             else
             {
-                sql = "select a.CASEID, b.NAME, d.OPTIONVALUE, a.STOPDATETIME, a.MOD_TS, a.STATE from SURVEILLANCE a, COGRP b, CO c, TARGETOPTS d where b.GID=c.GID and a.COID=c.COID and d.COID=a.COID and a.CASEID in (" + listItem + ");";
+                sql = "select a.CASEID, d.OPTIONVALUE, a.STOPDATETIME, a.MOD_TS, a.STATE from SURVEILLANCE a, COGRP b, CO c, TARGETOPTS d where b.GID=c.GID and a.COID=c.COID and d.COID=a.COID and a.CASEID in (" + listItem + ");";
+                //sql = "select a.CASEID, b.NAME, d.OPTIONVALUE, a.STOPDATETIME, a.MOD_TS, a.STATE from SURVEILLANCE a, COGRP b, CO c, TARGETOPTS d where b.GID=c.GID and a.COID=c.COID and d.COID=a.COID and a.CASEID in (" + listItem + ");";
             }
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
@@ -64,15 +65,15 @@ namespace XMSIntellegoSync
         //Lấy danh sách các intercept  được thay đổi trên Xcipio trong bảng Surveillance
         public MySqlCommand getListUpdatedIntercept(MySqlConnection connection, string fromDate, string toDate)
         {
-            string sql = "select a.CASEID, b.NAME, d.OPTIONVALUE, a.STOPDATETIME, a.MOD_TS, a.STATE from SURVEILLANCE a, COGRP b, CO c, TARGETOPTS d where b.GID=c.GID and a.COID=c.COID and d.COID=a.COID and a.MOD_TS between '"+ fromDate + "' and  '"+toDate+"';";
+            string sql = "select a.CASEID, d.OPTIONVALUE, a.STOPDATETIME, a.MOD_TS, a.STATE from SURVEILLANCE a, COGRP b, CO c, TARGETOPTS d where b.GID=c.GID and a.COID=c.COID and d.COID=a.COID and a.MOD_TS between '"+ fromDate + "' and  '"+toDate+"';";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }
 
         //update thông tin trên Xcipio với STATE = ACTIVE
-        public MySqlCommand updateActiveRecordOnXcipio(MySqlConnection connection,string name,string optionvalue, string CASEID)
+        public MySqlCommand updateActiveRecordOnXcipio(MySqlConnection connection, string stopdatetime,string optionvalue, string CASEID)
         {
-            string sql = "Update intercept SET intercept.expiration_date = current_timestamp(), intercept.description = '"+ name+"', intercept.interceptType = 'CC' where intercept.name = '"+CASEID+"';";
+            string sql = "Update intercept SET intercept.expiration_date = '"+stopdatetime+"', intercept.description = '"+ optionvalue+"', intercept.interceptType = 'CC' where intercept.name = '"+CASEID+"';";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }

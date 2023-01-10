@@ -20,31 +20,25 @@ namespace HoursExportListener
         private SQLServerHelper sqlserverHelper = new SQLServerHelper();
         public void Execute(IJobExecutionContext context)
         {
-            //throw new NotImplementedException();
             exportSingleData();
-            //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         public async void exportSingleData()
         {
             listTarget = sqlserverHelper.GetListExportTarget();
 
-            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 00, 00);
-            //var currentTime = new DateTime(DateTime.Now.Year, 12, 07, 11, 00, 00);
+            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 10, 00, 00);
 
             var startTime = (currentTime).AddHours(-8).ToString("yyyy-MM-ddTHH:mm:ssZ");
             var endTime = (currentTime).AddHours(-7).ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-            //var startTime = (currentTime).AddHours(0).ToString("yyyy-MM-ddTHH:mm:ssZ");
-            //var endTime = (currentTime).AddHours(48).ToString("yyyy-MM-ddTHH:mm:ssZ");
-
             var startTimeWrite = currentTime.ToString("yyyy-MM-dd HH-mm");
             foreach (var item in listTarget)
             {
-                //ExecuteCaseName(item, startTime, endTime, startTimeWrite);
-                await ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
+                 await ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
             }
             //await Task.WhenAll(tasks);
+            //Console.ReadLine();
         }
 
         private async Task ExecuteCaseNameAsync(ExportTarget item, string startTime, string endTime, string startTimeWrite)
@@ -55,9 +49,12 @@ namespace HoursExportListener
                 List<Task> tasks = new List<Task>();
                 foreach (var interceptNameObject in tempListInterceptName)
                 {
-                    tasks.Add(ProcessIntercept(interceptNameObject, startTime, endTime, startTimeWrite));
+                    //if(interceptNameObject.InterceptName == "84778542863")
+                    //{
+                        tasks.Add(ProcessIntercept(interceptNameObject, startTime, endTime, startTimeWrite));
                 }
                 await Task.WhenAll(tasks);
+                
                 Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ")+"[DONE] Exported " + tempListInterceptName.Count() + " intercept from case " + item.TargetName);
             }
             catch (Exception ex)

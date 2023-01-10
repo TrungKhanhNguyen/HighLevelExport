@@ -32,15 +32,6 @@ namespace ConnectionHelper.Helper
                             {
                                 id = rdr.GetString(0),
                                 name = rdr.GetString(1),
-                                //brief = rdr.GetString(2),
-                                //owner = rdr.GetString(3),
-                                //dateCreated = rdr.GetString(4),
-                                //dateUpdated = rdr.GetString(5),
-                                //sensitivity = rdr.GetString(6),
-                                //priority    = rdr.GetString(7),
-                                //status = rdr.GetString(8),
-                                //group = rdr.GetString(9),
-                                //trashedTime = rdr.GetString(10),
                             };
                             listObj.Add(tempObj);
                         }

@@ -12,7 +12,7 @@ namespace XMSIntellegoSync
         public string InterceptName { get; set; }
 
         public string CASEID { get; set; }
-        public string NAME { get; set; }
+        //public string NAME { get; set; }
         public string OPTIONVALUE { get; set; }
 
         public string STOPDATETIME { get; set; }

@@ -21,15 +21,17 @@ namespace XMSIntellegoSync
 
         public void SyncData()
         {
-            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 00, 00);
-            //var currentTime = new DateTime(2022, 12, 31, 23, 00, 00);
-            //var xxTime = new DateTime(2022, 12, 31, 23, 59, 59);
+            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
+            //var currentTime = new DateTime(2023, 01, 05, 13, 00, 00);
+            //var xxTime = new DateTime(2023, 01, 05, 14, 00, 00);
 
-            var startTime = (currentTime).AddHours(-1).ToString("yyyy-MM-dd HH:mm:ss");
-            var endTime = (currentTime).ToString("yyyy-MM-dd HH:mm:ss");
+            var startTime = (currentTime).AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");
+            var endTime = (currentTime).AddMinutes(-15).ToString("yyyy-MM-dd HH:mm:ss");
 
-            syncNewData(startTime, endTime);
+            var startTimeNew = (currentTime).AddHours(-7).AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");
+            var endTimeNew = (currentTime).AddHours(-7).AddMinutes(-15).ToString("yyyy-MM-dd HH:mm:ss");
 
+            syncNewData(startTimeNew, endTimeNew);
             syncUpdatedData(startTime, endTime);
         }
         private void syncNewData(string startTime, string endTime)
@@ -71,11 +73,11 @@ namespace XMSIntellegoSync
                                     while (rdr.Read())
                                     {
                                         var caseid = rdr.GetString(0);
-                                        var name = rdr.GetString(1);
-                                        var optionvalue = rdr.GetString(2);
-                                        var stopdatetime = rdr.GetString(3);
-                                        var mod_ts = rdr.GetString(4);
-                                        var state = rdr.GetString(5);
+                                        //var name = rdr.GetString(1);
+                                        var optionvalue = rdr.GetString(1);
+                                        var stopdatetime = rdr.GetString(2);
+                                        var mod_ts = rdr.GetString(3);
+                                        var state = rdr.GetString(4);
 
                                         var tempItem = listObject.Where(m => m.InterceptName == caseid).FirstOrDefault();
                                         if (tempItem != null)
@@ -85,7 +87,7 @@ namespace XMSIntellegoSync
                                                 var tempDate = stopdatetime.Replace('T', ' ').Replace('Z', ' ');
                                                 tempItem.STOPDATETIME = tempDate;
                                                 tempItem.OPTIONVALUE = optionvalue;
-                                                tempItem.NAME = name;
+                                                //tempItem.NAME = name;
                                                 tempItem.MOD_TS = mod_ts;
                                                 tempItem.STATE = state;
                                                 tempItem.CASEID = caseid;
@@ -102,11 +104,11 @@ namespace XMSIntellegoSync
 
                         foreach (var item in listObject)
                         {
-                            string sql = "Update intellego.intercept SET intercept.expiration_date = '" + item.STOPDATETIME + "' , intercept.description = '" + item.NAME + "', intercept.interceptType = 'CC' where intercept.name = '" + item.InterceptName +"';";
+                            string sql = "Update intellego.intercept SET intercept.expiration_date = '" + item.STOPDATETIME + "' , intercept.description = '" + item.OPTIONVALUE + "', intercept.interceptType = 'CC' where intercept.name = '" + item.InterceptName +"';";
                             var cmd = new MySqlCommand(sql, connection);
                             cmd.ExecuteNonQuery();
 
-                            var provinceName = getProvinceNameFromFullName(item.NAME);
+                            var provinceName = getProvinceNameFromFullName(item.OPTIONVALUE);
                             var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
                             if (tempDiaphuong != null)
                             {
@@ -145,16 +147,16 @@ namespace XMSIntellegoSync
                             while (rdr.Read())
                             {
                                 var caseid = rdr.GetString(0);
-                                var name = rdr.GetString(1);
-                                var optionvalue = rdr.GetString(2);
-                                var stopdatetime = rdr.GetString(3);
-                                var mod_ts = rdr.GetString(4);
-                                var state = rdr.GetString(5);
+                                //var name = rdr.GetString(1);
+                                var optionvalue = rdr.GetString(1);
+                                var stopdatetime = rdr.GetString(2);
+                                var mod_ts = rdr.GetString(3);
+                                var state = rdr.GetString(4);
                                 var tempDate = stopdatetime.Replace('T', ' ').Replace('Z', ' ');
                                 var tempObj = new NewSyncObject
                                 {
                                     CASEID = caseid,
-                                    NAME = name,
+                                    //NAME = name,
                                     MOD_TS = mod_ts,
                                     STATE = state,
                                     STOPDATETIME = tempDate,
@@ -187,57 +189,58 @@ namespace XMSIntellegoSync
                     var listActiveObject = listObject.Where(m => m.STATE == "ACTIVE").ToList();
                     foreach (var item in listActiveObject)
                     {
-                        try
-                        {
-                            var cmd = helper.updateActiveRecordOnXcipio(connection, item.NAME, item.OPTIONVALUE, item.CASEID);
-                            cmd.ExecuteNonQuery();
-
-                            var provinceName = getProvinceNameFromFullName(item.NAME);
-
-                            var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
-                            if (tempDiaphuong != null)
+                        //if(item.CASEID == "84819403526")
+                        //{
+                            try
                             {
-                                var interceptid = item.InterceptId;
-                                var caseid = tempDiaphuong.TargetId;
-                                UpdateProvinceData(connection, interceptid, caseid, provinceName);
-                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced ACTIVE data " + item.CASEID);
+                                var cmd = helper.updateActiveRecordOnXcipio(connection, item.STOPDATETIME, item.OPTIONVALUE, item.CASEID);
+                                cmd.ExecuteNonQuery();
+
+                                var provinceName = getProvinceNameFromFullName(item.OPTIONVALUE);
+
+                                var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
+                                if (tempDiaphuong != null)
+                                {
+                                    var interceptid = item.InterceptId;
+                                    var caseid = tempDiaphuong.TargetId;
+                                    UpdateProvinceData(connection, interceptid, caseid, provinceName);
+                                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced ACTIVE data " + item.CASEID);
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Active intercept: " + item.CASEID + ex.Message);
-                        }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Active intercept: " + item.CASEID + " " + ex.Message);
+                            }
+                        
+                        
 
                     }
 
                     var listInactiveObject = listObject.Where(m => m.STATE == "INACTIVE").ToList();
                     foreach (var item in listInactiveObject)
                     {
-                        try
-                        {
-                            var provinceName = getProvinceNameFromFullName(item.NAME);
-                            var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
-                            if (tempDiaphuong != null)
+                            try
                             {
-                                var cmd = helper.updateInterceptTrashTime(connection, item.InterceptId);
-                                cmd.ExecuteNonQuery();
+                                var provinceName = getProvinceNameFromFullName(item.OPTIONVALUE);
+                                var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
+                                if (tempDiaphuong != null)
+                                {
+                                    var cmd = helper.updateInterceptTrashTime(connection, item.InterceptId);
+                                    cmd.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    var cmd = helper.updateInterceptSuspendedTime(connection, item.InterceptId);
+                                    cmd.ExecuteNonQuery();
+                                }
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced INACTIVE data " + item.CASEID);
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                var cmd = helper.updateInterceptSuspendedTime(connection, item.InterceptId);
-                                cmd.ExecuteNonQuery();
+                                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Inactive intercept: " + item.CASEID + " " + ex.Message);
                             }
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced INACTIVE data " + item.InterceptName );
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Inactive intercept: " + item.CASEID + ex.Message);
-                        }
-
                     }
                 }
-                
-                
             }
             catch (Exception ex)
             {
