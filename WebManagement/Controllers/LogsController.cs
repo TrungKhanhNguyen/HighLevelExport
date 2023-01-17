@@ -12,6 +12,11 @@ namespace WebManagement.Controllers
     {
         // GET: Logs
         private SQLServerHelper sqlserverHelper = new SQLServerHelper();
+
+        public ActionResult Home()
+        {
+            return View();
+        }
         public ActionResult Index()
         {
             //var listNumber = sqlserverHelper.GetAllHotNumber();

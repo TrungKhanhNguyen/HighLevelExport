@@ -85,15 +85,20 @@ namespace ConnectionHelper.Helper
 
         public string getDecodedSMSFromUrl(string url)
         {
-            string sms = "";
-            var subUrl = url.Replace("file://var/intellego/", "").Replace("/", @"\");
-            var absoluteUrl = StaticKey.MAIN_URL_FOLDER + subUrl.Trim();
-            string[] lines = System.IO.File.ReadAllLines(absoluteUrl);
-            if (lines.Length >= 2)
+            try
             {
-                sms = lines[1];
+                string sms = "";
+                var subUrl = url.Replace("file://var/intellego/", "").Replace("/", @"\");
+                var absoluteUrl = StaticKey.MAIN_URL_FOLDER + subUrl.Trim();
+                string[] lines = System.IO.File.ReadAllLines(absoluteUrl);
+                if (lines.Length >= 2)
+                {
+                    sms = lines[1];
+                }
+                return sms;
             }
-            return sms;
+            catch { return ""; }
+            
         }
         public string getHI3FilenameFromUrl(string url)
         {

@@ -14,6 +14,9 @@ namespace ConnectionHelper.Models
         public string elasticId { get; set; }
         public DateTime eventDate { get; set; }
 
+        public DateTime start_date { get; set; }
+        public DateTime expiration_date { get; set; }
+
         public string call_id { get; set; }
         public string call_direction { get; set; }
         public DateTime call_startTime { get; set; }
@@ -79,5 +82,13 @@ namespace ConnectionHelper.Models
 
         public string address { get; set; }
         public string latlon { get; set; }
+    }
+
+    public class BackupObject
+    {
+        public string id { get; set; }
+        public string name { get; set; }
+        public string start_date { get; set; }
+        public string expiration_date { get; set; }
     }
 }

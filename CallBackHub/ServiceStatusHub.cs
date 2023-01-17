@@ -17,5 +17,10 @@ namespace CallBackHub
         {
             hubContext.Clients.All.acknowledgeMessage(message);
         }
+
+        public void GetLogStatus(string message)
+        {
+            hubContext.Clients.All.logMessage(message);
+        }
     }
 }

@@ -87,3 +87,7 @@
 .bordercolorred{
     border-color : darkred;
 }
+.panel-addtarget select option {
+    padding: 5px 0;
+    font-size : 16px;
+}

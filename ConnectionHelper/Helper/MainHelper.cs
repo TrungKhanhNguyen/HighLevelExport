@@ -69,6 +69,52 @@ namespace ConnectionHelper.Helper
             return tempList;
         }
 
+        public void UpdateTrashedTime(string id)
+        {
+            var conn = helper.getConnectionString();
+            using (MySqlConnection connection = new MySqlConnection(conn))
+            {
+                connection.Open();
+                var sql = "UPDATE intercept SET intercept.trashedTime=current_timestamp(), intercept.trashedTime='' where intercept.id= '" + id + "';";
+                var cmd = new MySqlCommand(sql, connection);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public List<ExportObject> GetListBackupObject()
+        {
+            var tempList = new List<ExportObject>();
+            string connectionString = helper.getConnectionString();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                using (MySqlCommand cmd = helper.getListBackupIntercept(connection))
+                {
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            try
+                            {
+                                var tempObj = new ExportObject
+                                {
+                                    CaseName = "",
+                                    InterceptName = rdr.GetString(1),
+                                    InterceptId = rdr.GetString(0),
+                                    start_date = rdr.GetDateTime(2),
+                                    expiration_date = rdr.GetDateTime(3)
+                                };
+                                tempList.Add(tempObj);
+                            }
+                            catch { }
+                            
+                        }
+                    }
+                }
+            }
+            return tempList;
+        }
+
         public List<ExportObject> ExecuteReExportObject(CallReExport item)
         {
             string connectionString = helper.getConnectionString();
@@ -244,7 +290,7 @@ namespace ConnectionHelper.Helper
                 /****Phần truy vấn Elastic****/
                 var nodes = new Uri[]
                 {
-                        new Uri(StaticKey.ELASTIC_IP),
+                        new Uri(StaticKey.ELASTIC_LOCAL_IP),
                 };
                 var connectionPool = new StaticConnectionPool(nodes);
                 var connectionSettings = new ConnectionSettings(connectionPool).DisableDirectStreaming();
@@ -439,7 +485,8 @@ namespace ConnectionHelper.Helper
                                             }
                                             else
                                             {
-                                                sqlServerHelper.InsertToReExport(tempItem.CaseName, tempItem.InterceptName, tempItem.InterceptId, tempItem.elasticId, tempItem.eventDate, type, writeTime);
+                                                if(type != ReExportType.Backup.ToString())
+                                                    sqlServerHelper.InsertToReExport(tempItem.CaseName, tempItem.InterceptName, tempItem.InterceptId, tempItem.elasticId, tempItem.eventDate, type, writeTime);
                                             }
 
                                             tempListExportInterceptInfo.Add(tempItem);

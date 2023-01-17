@@ -21,8 +21,8 @@ namespace WebManagement.Controllers
         {
             if (Request.IsAuthenticated)
             {
-                //var sds = System.Web.HttpContext.Current.User.Identity.Name;
-                //var listNumber = sqlserverHelper.GetAllHotNumber();
+                var sds = System.Web.HttpContext.Current.User.Identity.Name;
+                var listNumber = sqlserverHelper.GetAllHotNumber();
 
                 var listCase = mainHelper.GetListCaseObject();
                 //var listCase = new List<CaseObject>();
@@ -39,14 +39,13 @@ namespace WebManagement.Controllers
 
                 ViewBag.BeginDate = DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy");
                 ViewBag.EndDate = DateTime.Now.ToString("dd-MM-yyyy");
-
-                return View();
-            }
+            return View();
+        }
             else
             {
                 return RedirectToAction("Login", "Login");
-            }
-        }
+    }
+}
 
         [HttpGet]
         public ActionResult ExportByTime(string casename, string interceptname, string interceptid, string beginValue, string endValue)
@@ -67,6 +66,7 @@ namespace WebManagement.Controllers
                 Connection.Start().Wait();
 
                 hub.Invoke("GetStatus", signalString).Wait();
+                    //hub.Invoke("GetLogStatus", signalString).Wait();
                 return Json(true, JsonRequestBehavior.AllowGet);
             }
             catch { return Json(false, JsonRequestBehavior.AllowGet); }

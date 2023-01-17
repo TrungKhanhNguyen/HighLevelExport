@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿
+using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Cors;
 using Owin;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ namespace CallBackHub
         {
             var hubConfiguration = new HubConfiguration();
             hubConfiguration.EnableDetailedErrors = true;
+            app.UseCors(CorsOptions.AllowAll);
             app.MapSignalR("/signalr", hubConfiguration);
         }
     }

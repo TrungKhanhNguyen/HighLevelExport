@@ -21,6 +21,7 @@ namespace ConnectionHelper.Models
 
         public static string MAIN_URL_FOLDER = @"Z:\";
         public static string EXPORT_FOLDER = @"C:\Export";
+        public static string BACKUP_FOLDER = @"C:\Backup";
         public static string EXPORT_2MINS_FOLDER = @"C:\Export2Mins";
         public static string EXPORT_MANUAL_FOLDER = @"C:\ExportManual";
 
@@ -28,7 +29,7 @@ namespace ConnectionHelper.Models
         public static string ELASTIC_LOCAL_IP = "http://localhost:9200/";
 
         public static string SIGNALR_IP = "http://172.10.2.39:8089/signalr";
-        public static string SIGNALR_LOCAL_IP = "http://192.168.1.6:8087/signalr";
+        public static string SIGNALR_LOCAL_IP = "http://192.168.1.4:8087/signalr";
     }
 
     public enum StatusInfo
@@ -44,6 +45,7 @@ namespace ConnectionHelper.Models
         Hour = 0,
         Minute = 1,
         Callback = 2,
+        Backup = 3
     }
 
     public enum ErrorType

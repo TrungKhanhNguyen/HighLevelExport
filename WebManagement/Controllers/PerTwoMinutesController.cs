@@ -26,7 +26,7 @@ namespace WebManagement.Controllers
                 //var sds = System.Web.HttpContext.Current.User.Identity.Name;
                 var listNumber = sqlserverHelper.GetAllHotNumber();
 
-                var listCase = mainHelper.GetListCaseObject();
+                var listCase = mainHelper.GetListCaseObject().OrderBy(m=>m.name).ToList();
                 //var listCase = new List<CaseObject>();
                 //listCase.Add(new CaseObject { id = "1", name = "C02" });
                 //listCase.Add(new CaseObject { id = "2", name = "C03" });
@@ -62,7 +62,7 @@ namespace WebManagement.Controllers
         {
             var tempTarget = new ExportTarget { TargetName = casename };
             var tempList = new List<ExportObject>();
-            tempList = mainHelper.GetListInterceptName(tempTarget);
+            tempList = mainHelper.GetListInterceptName(tempTarget).OrderBy(m=>m.InterceptName).ToList();
 
             //switch (casename)
             //{
