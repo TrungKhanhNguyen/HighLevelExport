@@ -113,6 +113,39 @@ namespace ConnectionHelper.Helper
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }
+        public MySqlCommand getSingleCellTowerByCellId(MySqlConnection connection, ExportObject tempExport)
+        {
+            string listItem = "";
+            foreach(var item in tempExport.listCGI)
+            {
+                listItem += item.value;
+                var cgiIndex = tempExport.listCGI.IndexOf(item);
+                if (cgiIndex != tempExport.listCGI.Count() - 1)
+                {
+                    listItem += ",";
+                }
+            }
+            string sql = "";
+            if (String.IsNullOrEmpty(listItem))
+            {
+                sql = "SELECT cellid,address,latlong FROM slpdb_controller.celltower where celltower.type = -1";
+            }
+            else
+            {
+                sql = "SELECT cellid,address,latlong FROM slpdb_controller.celltower where cellid in (" + listItem + ") and celltower.type = 'CGI'";
+            }
+            var indexOfCloseCharacter = sql.LastIndexOf(')');
+            var indexOfLastComma = sql.LastIndexOf(',');
+            if (indexOfCloseCharacter > -1)
+            {
+                if ((indexOfLastComma + 1) == indexOfCloseCharacter)
+                {
+                    sql = sql.Remove(indexOfCloseCharacter - 1, 1);
+                }
+            }
+            var cmd = new MySqlCommand(sql, connection);
+            return cmd;
+        }
 
         public MySqlCommand getCellTowerByCellId(MySqlConnection connection, List<ExportObject> listExport)
         {
@@ -165,9 +198,9 @@ namespace ConnectionHelper.Helper
             }
             else
             {
-                sql = "SELECT cellid,address,latlong FROM slpdb_controller.celltower where cellid in ( " + listItem + ") and celltower.type = 'CGI'";
+                sql = "SELECT cellid,address,latlong FROM slpdb_controller.celltower where cellid in (" + listItem + ") and celltower.type = 'CGI'";
             }
-            var indexOfCloseCharacter = sql.IndexOf(')');
+            var indexOfCloseCharacter = sql.LastIndexOf(')');
             var indexOfLastComma = sql.LastIndexOf(',');
             if (indexOfCloseCharacter > -1)
             {
@@ -175,7 +208,6 @@ namespace ConnectionHelper.Helper
                 {
                     sql = sql.Remove(indexOfCloseCharacter - 1, 1);
                 }
-
             }
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
@@ -183,7 +215,7 @@ namespace ConnectionHelper.Helper
 
         public MySqlCommand getListBackupIntercept(MySqlConnection connection)
         {
-            var sql = "select intercept.id, intercept.name, start_date, expiration_date from intercept where intercept.suspendedTime!='' and intercept.group=3;";
+            var sql = "select intercept.id, intercept.name, dateCreated, expiration_date from intercept where intercept.suspendedTime!='' and intercept.group=3;";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }
@@ -202,6 +234,7 @@ namespace ConnectionHelper.Helper
                                 ""match"": {
                                     ""intercept"": ""intercepid""
                                 }}]}},
+   {""bool"" : {""must"" : [{""match"":{""relevance"":{""query"":""1""}}}]}},
                         {
                         ""bool"": {
                             ""must"": [

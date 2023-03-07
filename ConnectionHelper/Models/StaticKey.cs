@@ -21,7 +21,7 @@ namespace ConnectionHelper.Models
 
         public static string MAIN_URL_FOLDER = @"Z:\";
         public static string EXPORT_FOLDER = @"C:\Export";
-        public static string BACKUP_FOLDER = @"C:\Backup";
+        public static string BACKUP_FOLDER = @"E:\LMCBackup";
         public static string EXPORT_2MINS_FOLDER = @"C:\Export2Mins";
         public static string EXPORT_MANUAL_FOLDER = @"C:\ExportManual";
 

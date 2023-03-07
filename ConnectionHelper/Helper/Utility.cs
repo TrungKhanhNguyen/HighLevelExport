@@ -46,6 +46,7 @@ namespace ConnectionHelper.Helper
                         case "45201": network = "Mobifone"; break;
                         case "45202": network = "Vinaphone"; break;
                         case "45204": network = "Viettel"; break;
+                        case "45208": network = "Vinaphone"; break;
                     }
                 }
                 return network;
@@ -69,6 +70,7 @@ namespace ConnectionHelper.Helper
                         case "01": network = "Mobifone"; break;
                         case "02": network = "Vinaphone"; break;
                         case "04": network = "Viettel"; break;
+                        case "08": network = "Vinaphone"; break;
                     }
                 }
                 return network;
@@ -143,8 +145,8 @@ namespace ConnectionHelper.Helper
                 new string[] { "IMSI:", exportObject.call_participant_imsi == null? "" : exportObject.call_participant_imsi},
                 new string[] { "Monitored Target:", exportObject.InterceptName},
                 new string[] { "SMS-transfer-status:", ""},
-                new string[] { "Decoded SMS:", decodedMsg},
-                new string[] { "Decoded Number:", tempNormCin }
+                new string[] { "Decoded SMS: ", decodedMsg},
+                new string[] { "Decoded Number: ", tempNormCin }
             };
             var tempDic = listDic.ToList();
 

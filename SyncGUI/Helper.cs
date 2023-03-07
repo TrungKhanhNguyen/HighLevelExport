@@ -1,9 +1,12 @@
 ﻿using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Utilities.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Data.Entity.Infrastructure.Design.Executor;
+using System.Xml.Linq;
 
 namespace SyncGUI
 {
@@ -72,7 +75,8 @@ namespace SyncGUI
         //update thông tin trên Xcipio với STATE = ACTIVE
         public MySqlCommand updateActiveRecordOnXcipio(MySqlConnection connection, string stopdatetime, string optionvalue, string CASEID)
         {
-            string sql = "Update intercept SET intercept.expiration_date = '" + stopdatetime + "', intercept.description = '" + optionvalue + "', intercept.interceptType = 'CC' where intercept.name = '" + CASEID + "';";
+            
+            string sql = "Update intercept SET intercept.expiration_date = '" + stopdatetime + "', intercept.description = '" + optionvalue + "', intercept.interceptType = 'CC', intercept.trashedTime = null, intercept.suspendedTime = null where intercept.name = '" + CASEID + "';";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }

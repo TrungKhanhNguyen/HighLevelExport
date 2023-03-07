@@ -31,6 +31,7 @@ namespace SyncGUI
         }
         private void timer_Tick(object sender, EventArgs e)
         {
+            listLog = new List<Log>();
             var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
            
             var startTime = (currentTime).AddMinutes(-30).ToString("yyyy-MM-dd HH:mm:ss");
@@ -44,7 +45,7 @@ namespace SyncGUI
             try
             {
                 var fileDirectory = @"C:\Logs\SyncAuto\";
-                string path = fileDirectory + DateTime.Now.ToString("yyyyMMddHH");
+                string path = fileDirectory + DateTime.Now.ToString("yyyyMMdd");
                 Directory.CreateDirectory(path);
                 var fullPath = path + @"\sync.txt";
                 var listItem = listLog.OrderBy(m => m.dateLog).ToList();
@@ -144,7 +145,11 @@ namespace SyncGUI
                                 UpdateProvinceData(connection, item.InterceptId, caseid, provinceName);
                             }
                         }
-                        var log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced " + listObject.Count() + " NEW DATA " + startTime + " to " + endTime;
+                        var log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced " + listObject.Count() + " NEW DATA from " + startTime + " to " + endTime + " - ";
+                        foreach(var item in listObject)
+                        {
+                            log += item.InterceptName + ",";
+                        }
                         AddToLog(log, DateTime.Now);
                     }
                 }
@@ -259,18 +264,27 @@ namespace SyncGUI
                     {
                         try
                         {
-                            var provinceName = getProvinceNameFromFullName(item.OPTIONVALUE);
-                            var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
-                            if (tempDiaphuong != null)
+                            if (!String.IsNullOrEmpty(item.OPTIONVALUE))
                             {
-                                var cmd = helper.updateInterceptTrashTime(connection, item.InterceptId);
-                                cmd.ExecuteNonQuery();
+                                var provinceName = getProvinceNameFromFullName(item.OPTIONVALUE);
+                                var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
+                                if (tempDiaphuong != null)
+                                {
+                                    var cmd = helper.updateInterceptTrashTime(connection, item.InterceptId);
+                                    cmd.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    var cmd = helper.updateInterceptSuspendedTime(connection, item.InterceptId);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                             else
                             {
                                 var cmd = helper.updateInterceptSuspendedTime(connection, item.InterceptId);
                                 cmd.ExecuteNonQuery();
                             }
+                           
                             AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced INACTIVE data " + item.CASEID, DateTime.Now);
                         }
                         catch (Exception ex)

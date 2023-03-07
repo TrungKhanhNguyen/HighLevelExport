@@ -63,6 +63,7 @@ namespace WebManagement.Controllers
             var tempTarget = new ExportTarget { TargetName = casename };
             var tempList = new List<ExportObject>();
             tempList = mainHelper.GetListInterceptName(tempTarget).OrderBy(m=>m.InterceptName).ToList();
+            tempList.Insert(0, new ExportObject { InterceptId = "0", InterceptName = "All" });
 
             //switch (casename)
             //{

@@ -9,10 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebManagement", "WebManagem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoursExportListener", "HoursExportListener\HoursExportListener.csproj", "{66106AC1-E346-4596-9BAC-0DC0F8435F53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinutesExportListener", "MinutesExportListener\MinutesExportListener.csproj", "{66AF9F49-046A-41F4-869E-019C25DC7B57}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallBackListener", "CallBackListener\CallBackListener.csproj", "{E8664CB1-C2C2-4084-88DA-1ABB9CE1B84A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallBackHub", "CallBackHub\CallBackHub.csproj", "{903ED68E-75FA-4259-B8C9-57665853F693}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HI3CopyListener", "HI3CopyListener\HI3CopyListener.csproj", "{7401383D-C94D-4E5D-B79F-256BFA743EB0}"
@@ -22,8 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMSIntellegoSync", "XMSIntellegoSync\XMSIntellegoSync.csproj", "{8C22245D-8632-42F0-B01C-02A389D1FBA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallbackListenerGUI", "CallbackListenerGUI\CallbackListenerGUI.csproj", "{8C5D99CF-225D-4C12-AAF5-3EB06B8B0CFF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoursExportGUI", "HoursExportGUI\HoursExportGUI.csproj", "{99B80FAF-9163-4AE6-BCDA-7638D311BE1D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinutesExportGUI", "MinutesExportGUI\MinutesExportGUI.csproj", "{0922D7C2-191C-43CD-AE17-DE0DCBFA7524}"
 EndProject
@@ -49,14 +43,6 @@ Global
 		{66106AC1-E346-4596-9BAC-0DC0F8435F53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66106AC1-E346-4596-9BAC-0DC0F8435F53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66106AC1-E346-4596-9BAC-0DC0F8435F53}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66AF9F49-046A-41F4-869E-019C25DC7B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66AF9F49-046A-41F4-869E-019C25DC7B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66AF9F49-046A-41F4-869E-019C25DC7B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66AF9F49-046A-41F4-869E-019C25DC7B57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8664CB1-C2C2-4084-88DA-1ABB9CE1B84A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8664CB1-C2C2-4084-88DA-1ABB9CE1B84A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8664CB1-C2C2-4084-88DA-1ABB9CE1B84A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8664CB1-C2C2-4084-88DA-1ABB9CE1B84A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{903ED68E-75FA-4259-B8C9-57665853F693}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{903ED68E-75FA-4259-B8C9-57665853F693}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{903ED68E-75FA-4259-B8C9-57665853F693}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,10 +63,6 @@ Global
 		{8C5D99CF-225D-4C12-AAF5-3EB06B8B0CFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C5D99CF-225D-4C12-AAF5-3EB06B8B0CFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C5D99CF-225D-4C12-AAF5-3EB06B8B0CFF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99B80FAF-9163-4AE6-BCDA-7638D311BE1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99B80FAF-9163-4AE6-BCDA-7638D311BE1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99B80FAF-9163-4AE6-BCDA-7638D311BE1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99B80FAF-9163-4AE6-BCDA-7638D311BE1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0922D7C2-191C-43CD-AE17-DE0DCBFA7524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0922D7C2-191C-43CD-AE17-DE0DCBFA7524}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0922D7C2-191C-43CD-AE17-DE0DCBFA7524}.Release|Any CPU.ActiveCfg = Release|Any CPU

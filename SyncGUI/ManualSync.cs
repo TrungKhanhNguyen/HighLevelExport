@@ -51,6 +51,7 @@ namespace SyncGUI
             {
                 string connectionString = helper.getIntellgoConnectionString();
                 string xcpconnectionString = helper.getXCDBConnectionString();
+
                 var listObject = new List<NewSyncObject>();
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
@@ -70,7 +71,6 @@ namespace SyncGUI
                             }
                         }
                     }
-
                     if (listObject.Count() > 0)
                     {
                         using (MySqlConnection xcpconnection = new MySqlConnection(xcpconnectionString))
@@ -126,14 +126,16 @@ namespace SyncGUI
                                 UpdateProvinceData(connection, item.InterceptId, caseid, provinceName);
                             }
                         }
-                        AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced " + listObject.Count() + " NEW DATA " + startTime + " to " + endTime + " (in UTC+0)");
+                        var log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced " + listObject.Count() + " NEW DATA " + startTime + " to " + endTime;
+                        AddToLog(log);
                     }
                 }
                 //return listObject;
             }
             catch (Exception ex)
             {
-                AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[FAILED] Error when sync NEW DATA " + startTime + " to " + endTime + " (in UTC+0), " + ex.Message);
+                string log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[FAILED] Error when sync NEW DATA " + startTime + " to " + endTime + " " + ex.Message;
+                AddToLog(log);
             }
 
         }
@@ -220,12 +222,16 @@ namespace SyncGUI
                                 var interceptid = item.InterceptId;
                                 var caseid = tempDiaphuong.TargetId;
                                 UpdateProvinceData(connection, interceptid, caseid, provinceName);
-                                AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced ACTIVE data " + item.CASEID);
+                                //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced ACTIVE data " + item.CASEID);
+
+                                var log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced ACTIVE data " + item.CASEID;
+                                AddToLog(log);
                             }
                         }
                         catch (Exception ex)
                         {
-                            AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Active intercept: " + item.CASEID + " " + ex.Message);
+                            var log = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Active intercept: " + item.CASEID + " " + ex.Message;
+                            AddToLog(log);
                         }
                     }
 
@@ -234,33 +240,38 @@ namespace SyncGUI
                     {
                         try
                         {
-                            var provinceName = getProvinceNameFromFullName(item.OPTIONVALUE);
-                            var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
-                            if (tempDiaphuong != null)
+                            if (!String.IsNullOrEmpty(item.OPTIONVALUE))
                             {
-                                var cmd = helper.updateInterceptTrashTime(connection, item.InterceptId);
-                                cmd.ExecuteNonQuery();
+                                var provinceName = getProvinceNameFromFullName(item.OPTIONVALUE);
+                                var tempDiaphuong = listDiaPhuong.Where(m => m.TargetName == provinceName).FirstOrDefault();
+                                if (tempDiaphuong != null)
+                                {
+                                    var cmd = helper.updateInterceptTrashTime(connection, item.InterceptId);
+                                    cmd.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    var cmd = helper.updateInterceptSuspendedTime(connection, item.InterceptId);
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                             else
                             {
                                 var cmd = helper.updateInterceptSuspendedTime(connection, item.InterceptId);
                                 cmd.ExecuteNonQuery();
                             }
-                            AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Synced INACTIVE data " + item.CASEID);
+                            AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[DONE] Synced INACTIVE data " + item.CASEID);
                         }
                         catch (Exception ex)
                         {
-                            AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Inactive intercept: " + item.CASEID + " " + ex.Message);
+                            AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[FAILED] Error when sync UPDATE data " + startTime + " to " + endTime + " , Inactive intercept: " + item.CASEID + " " + ex.Message);
                         }
-
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
-                AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when sync UPDATE DATA " + startTime + " to " + endTime + " " + ex.Message);
+                AddToLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + "[FAILED] Error when sync UPDATE DATA " + startTime + " to " + endTime + " " + ex.Message);
             }
 
         }

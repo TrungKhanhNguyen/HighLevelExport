@@ -52,9 +52,9 @@ namespace WebManagement.Controllers
         {
             try
             {
-                DateTime beginDate = DateTime.ParseExact(beginValue, "dd-MM-yyyy HH:mm",
+                DateTime beginDate = DateTime.ParseExact(beginValue, "dd-MM-yyyy H:m",
                                        System.Globalization.CultureInfo.InvariantCulture);
-                DateTime endDate = DateTime.ParseExact(endValue, "dd-MM-yyyy HH:mm",
+                DateTime endDate = DateTime.ParseExact(endValue, "dd-MM-yyyy H:m",
                                            System.Globalization.CultureInfo.InvariantCulture);
                 var tempTarget = new ExportObject { InterceptId = interceptid, InterceptName = interceptname, CaseName = casename };
                 var signalString = casename + ";" + interceptid + ";" + interceptname + ";" + beginValue + ";" + endValue;

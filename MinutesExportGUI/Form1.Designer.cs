@@ -52,9 +52,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtLog.Location = new System.Drawing.Point(9, 24);
-            this.txtLog.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtLog.Margin = new System.Windows.Forms.Padding(2);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtLog.Size = new System.Drawing.Size(295, 150);
             this.txtLog.TabIndex = 2;
             this.txtLog.TextChanged += new System.EventHandler(this.txtLog_TextChanged);
@@ -67,7 +68,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtLog);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "MinutesExportGUI";
             this.Load += new System.EventHandler(this.Form1_Load);

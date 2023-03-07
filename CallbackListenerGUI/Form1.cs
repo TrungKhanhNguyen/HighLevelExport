@@ -16,6 +16,8 @@ namespace CallbackListenerGUI
 {
     public partial class Form1 : Form
     {
+        private MainHelper mainHelper = new MainHelper();
+        private List<string> listLog= new List<string>();
         public Form1()
         {
             InitializeComponent();
@@ -44,7 +46,7 @@ namespace CallbackListenerGUI
             //Console.ReadKey();
         }
 
-        private void ExportData(string message)
+        private async void ExportData(string message)
         {
             try
             {
@@ -57,10 +59,10 @@ namespace CallbackListenerGUI
                     var beginvalue = arrayData[3];
                     var endvalue = arrayData[4];
 
-                    var beginDate = DateTime.ParseExact(beginvalue, "dd-MM-yyyy HH:mm",
+                    var beginDate = DateTime.ParseExact(beginvalue, "dd-MM-yyyy H:m",
                                            System.Globalization.CultureInfo.InvariantCulture);
 
-                    var endDate = DateTime.ParseExact(endvalue, "dd-MM-yyyy HH:mm",
+                    var endDate = DateTime.ParseExact(endvalue, "dd-MM-yyyy H:m",
                                            System.Globalization.CultureInfo.InvariantCulture);
 
                     var tempBegin = beginDate.AddHours(-7).ToString("yyyy-MM-ddTHH:mm:00Z");
@@ -68,19 +70,43 @@ namespace CallbackListenerGUI
 
                     var startTimeWrite = beginDate.ToString("yyyy-MM-dd HH-mm");
                     var tempTarget = new ExportObject { InterceptId = interceptid, InterceptName = interceptname, CaseName = casename };
-                    ExecuteInterceptName(tempTarget, tempBegin, tempEnd, startTimeWrite);
+                    if(interceptid == "0" && interceptname == "All")
+                    {
+                        var tempExportTarget = new ExportTarget { Active = true, TargetName = casename };
+                        var tempListInterceptName = mainHelper.GetListInterceptName(tempExportTarget);
+                        List<Task> tasks = new List<Task>();
+                        foreach (var interceptNameObject in tempListInterceptName)
+                        {
+                            tasks.Add(ProcessIntercept(interceptNameObject, tempBegin, tempEnd, startTimeWrite));
+                        }
+                        await Task.WhenAll(tasks);
+                    }
+                    else
+                    {
+                        ExecuteInterceptName(tempTarget, tempBegin, tempEnd, startTimeWrite);
+                    }
+                    
                 }
             }
             catch (Exception ex)
             {
-                //txtLog.Invoke(new Action(() =>
-                //{
+                txtLog.Invoke(new Action(() =>
+                {
                     txtLog.Text += Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") + "[ERROR] - " + ex.Message;
-                //}));
-                    //Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") + "[ERROR] - " + ex.Message);
+                }));
             }
 
         }
+
+      
+        private Task ProcessIntercept(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
+        {
+            return Task.Run(() =>
+            {
+                ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
+            });
+        }
+
         private void ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
         {
             try
@@ -90,13 +116,21 @@ namespace CallbackListenerGUI
                 if (finalExportList.Count() > 0)
                 {
                     WriteCallBackFile(finalExportList, startTimeWrite, interceptNameObject.CaseName, interceptNameObject.InterceptName);
-                    txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Exported Intercept name " + interceptNameObject.InterceptName;
+                    txtLog.Invoke(new Action(() =>
+                    {
+                        txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Exported Intercept name " + interceptNameObject.InterceptName;
+                    }));
+                    
                 }
 
             }
             catch (Exception ex)
             {
-                txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message;
+                txtLog.Invoke(new Action(() =>
+                {
+                    txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message;
+                }));
+                
                 //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message);
                 //SQLServerHelper sqlserverHelper = new SQLServerHelper();
                 //sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName, ErrorType.CallbackError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);

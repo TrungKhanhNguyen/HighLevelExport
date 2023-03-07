@@ -17,6 +17,7 @@ namespace ConnectionHelper.Models
         public DateTime start_date { get; set; }
         public DateTime expiration_date { get; set; }
 
+        public DateTime dateCreated { get; set; }
         public string call_id { get; set; }
         public string call_direction { get; set; }
         public DateTime call_startTime { get; set; }
