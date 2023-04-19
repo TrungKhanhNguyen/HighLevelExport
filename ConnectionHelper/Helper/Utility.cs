@@ -33,7 +33,7 @@ namespace ConnectionHelper.Helper
             return latlonObj;
         }
 
-        public string getNetworkByIMSI(string imsi)
+        public string getNetworkByIMSI(string imsi, string phone)
         {
             var network = "";
             try
@@ -49,6 +49,50 @@ namespace ConnectionHelper.Helper
                         case "45208": network = "Vinaphone"; break;
                     }
                 }
+                else
+                {
+                    var tempPhone = phone.Substring(0, 3);
+                    switch (tempPhone )
+                    {
+                        case "032":
+                        case "033":
+                        case "034":
+                        case "035":
+                        case "036":
+                        case "037":
+                        case "038":
+                        case "039":
+                        case "086":
+                        case "096":
+                        case "097":
+                        case "098":
+                            network = "Viettel"; break;
+                        case "081":
+                        case "082":
+                        case "083":
+                        case "084":
+                        case "085":
+                        case "088":
+                        case "091":
+                        case "094":
+                            network = "Vinaphone"; break;
+
+                        case "070":
+                        case "076":
+                        case "077":
+                        case "078":
+                        case "079":
+                        case "089":
+                        case "090":
+                        case "093":
+                            network = "Mobifone"; break;
+                        case "092":
+                        case "056":
+                        case "058":
+                            network = "Vietnamobile"; break;
+                    }
+                }
+                
                 return network;
             }
             catch { return ""; }
@@ -95,7 +139,12 @@ namespace ConnectionHelper.Helper
                 string[] lines = System.IO.File.ReadAllLines(absoluteUrl);
                 if (lines.Length >= 2)
                 {
-                    sms = lines[1];
+                    foreach(var row in lines)
+                    {
+                        if(row.StartsWith("SMS Header")) { break; }
+                        sms += row + " ";
+                    }
+                    //sms = lines[1];
                 }
                 return sms;
             }
@@ -187,7 +236,7 @@ namespace ConnectionHelper.Helper
                 sequence = "",
                 displayDate = exportObject.eventDate.ToString("dd/MM/yyyy HH.mm.ss"),
                 length = "0",
-                network = getNetworkByIMSI(exportObject.call_participant_imsi),
+                network = getNetworkByIMSI(exportObject.call_participant_imsi, tempInterceptName),
                 direction = exportObject.call_direction == "1" ? "IN" : "OUT",
                 normCin = tempNormCin,
                 lastUpdate = exportObject.eventDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -268,7 +317,7 @@ namespace ConnectionHelper.Helper
                 sequence = "",
                 displayDate = exportObject.eventDate.ToString("dd/MM/yyyy HH.mm.ss"),
                 length = exportObject.call_conversationDuration + "000",
-                network = getNetworkByIMSI(exportObject.call_participant_imsi),
+                network = getNetworkByIMSI(exportObject.call_participant_imsi, tempInterceptName),
                 direction = exportObject.call_direction == "1" ? "IN" : "OUT",
                 normCin = tempNormCin,
                 lastUpdate = exportObject.eventDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),

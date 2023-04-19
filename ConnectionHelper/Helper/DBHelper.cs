@@ -49,6 +49,13 @@ namespace ConnectionHelper.Helper
             return cmd;
         }
 
+        public MySqlCommand getSingleIntellegoCaseAndId2Mins(MySqlConnection connection, ExportTarget target)
+        {
+            string sql = "select b.name as CaseName, a.name as InterceptName, a.id as InterceptId, a.description as Description from intellego.intercept a, intellego.case b, intellego.case_intercept c where b.name = '" + target.TargetName + "' and b.id = c.case  and c.intercept = a.id order by a.id";
+            var cmd = new MySqlCommand(sql, connection);
+            return cmd;
+        }
+
         public MySqlCommand getLocationUpdateInterceptInfo(MySqlConnection connection, List<ExportObject> listExport)
         {
             string listItem = "";
@@ -69,6 +76,31 @@ namespace ConnectionHelper.Helper
             else
             {
                 sql = "select * from intellego_events.document where id in ( " + listItem + ") and type = 19;";
+            }
+            var cmd = new MySqlCommand(sql, connection);
+            return cmd;
+        }
+
+        public MySqlCommand getLostHI2Info(MySqlConnection connection, List<ExportObject> listExport)
+        {
+            string listItem = "";
+            foreach (var item in listExport)
+            {
+                listItem += item.elasticId;
+                var itemIndex = listExport.IndexOf(item);
+                if (itemIndex != listExport.Count() - 1)
+                {
+                    listItem += ",";
+                }
+            }
+            string sql = "";
+            if (String.IsNullOrEmpty(listItem))
+            {
+                sql = "select * from intellego_events.document where id = 0";
+            }
+            else
+            {
+                sql = "select a.id, a.type, b.*, c.* from intellego_events.document a, intellego_events.call b, intellego_events.call_product c where a.id in ("+ listItem +") and a.type=6 and b.type in (1, 2) and a.id=b.id and a.id=c.call ;";
             }
             var cmd = new MySqlCommand(sql, connection);
             return cmd;

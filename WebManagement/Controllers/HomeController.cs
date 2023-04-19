@@ -18,9 +18,9 @@ namespace WebManagement.Controllers
         {
             if (Request.IsAuthenticated)
             {
-                var listTarget = sqlserverHelper.GetListExportTarget();
+                var listTarget = sqlserverHelper.GetListExportTarget().OrderBy(m=>m.TargetName);
                 //List<CaseObject> test = new List<CaseObject>();
-                var listCase = mainHelper.GetListCaseObject();
+                var listCase = mainHelper.GetListCaseObject().OrderBy(m=>m.name).ToList();
                 //test.Add(new CaseObject { id = "1", name = "C02" });
                 //test.Add(new CaseObject { id = "2", name = "C03" });
                 //test.Add(new CaseObject { id = "3", name = "C04" });

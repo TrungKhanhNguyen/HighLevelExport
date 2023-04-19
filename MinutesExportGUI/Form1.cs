@@ -38,24 +38,28 @@ namespace MinutesExportGUI
         }
         private async void timer_Tick(object sender, EventArgs e)
         {
+            listLog = new List<Log>();
             txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + "Start 2 minutes export session";
             //Call method
             listNumber = sqlserverHelper.GetAllHotNumber();
 
-            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
-            //var currentTime = new DateTime(DateTime.Now.Year, 12, 7, 10, 12, 00);
+            var currentTarget = listNumber[0];
 
+            var tempExportTarget = new ExportTarget { Active = true, TargetId = currentTarget.InterceptId, TargetName = currentTarget.CaseName };
+
+            var tempListInterceptName = mainHelper.GetListIntercept2MinsName(tempExportTarget);
+
+            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
             var startTime = (currentTime).AddHours(-7).AddMinutes(-2).ToString("yyyy-MM-ddTHH:mm:ssZ");
             var endTime = (currentTime).AddHours(-7).ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-            //var startTime = (currentTime).AddHours(0).ToString("yyyy-MM-ddTHH:mm:ssZ");
-            //var endTime = (currentTime).AddHours(48).ToString("yyyy-MM-ddTHH:mm:ssZ");
-
             var startTimeWrite = currentTime.ToString("yyyy-MM-dd HH-mm");
+
             List<Task> tasks = new List<Task>();
-            foreach (var item in listNumber)
+
+            foreach (var item in tempListInterceptName)
             {
-                var tempTarget = new ExportObject { InterceptId = item.InterceptId, InterceptName = item.PhoneNumber, CaseName = item.CaseName };
+                var tempTarget = new ExportObject { InterceptId = item.InterceptId, InterceptName = item.InterceptName, CaseName = item.CaseName };
                 tasks.Add(ProcessIntercept(tempTarget, startTime, endTime, startTimeWrite));
             }
             await Task.WhenAll(tasks);

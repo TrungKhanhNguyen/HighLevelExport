@@ -18,13 +18,15 @@ namespace HoursExportListener
         private MainHelper mainHelper = new MainHelper();
         private Utility utility = new Utility();
         private SQLServerHelper sqlserverHelper = new SQLServerHelper();
+        private List<Log> listLog = new List<Log>();
         public void Execute(IJobExecutionContext context)
         {
             exportSingleData();
         }
 
-        public async void exportSingleData()
+        public void exportSingleData()
         {
+            listLog = new List<Log>();
             listTarget = sqlserverHelper.GetListExportTarget();
 
             var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 10, 00, 00);
@@ -33,15 +35,37 @@ namespace HoursExportListener
             var endTime = (currentTime).AddHours(-7).ToString("yyyy-MM-ddTHH:mm:ssZ");
 
             var startTimeWrite = currentTime.ToString("yyyy-MM-dd HH-mm");
+            //List<Task> taskCase = new List<Task>();
             foreach (var item in listTarget)
             {
-                 await ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
+                 //taskCase.Add(ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite));
+                ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
             }
-            //await Task.WhenAll(tasks);
+            //await Task.WhenAll(taskCase);
+
+            try
+            {
+                var fileDirectory = @"C:\Logs\1Hour\";
+                string path = fileDirectory + DateTime.Now.ToString("yyyyMMddHH");
+                Directory.CreateDirectory(path);
+                var fullPath = path + @"\1hour.txt";
+                var listItem = listLog.OrderBy(m => m.dateLog).ToList();
+                using (StreamWriter sw = (File.Exists(fullPath)) ? File.AppendText(fullPath) : File.CreateText(fullPath))
+                {
+                    foreach (var line in listItem)
+                    {
+                        sw.WriteLine(line.log);
+                    }
+                }
+            }
+            catch
+            {
+                AddLog(Environment.NewLine + "Cannot write log file");
+            }
             //Console.ReadLine();
         }
 
-        private async Task ExecuteCaseNameAsync(ExportTarget item, string startTime, string endTime, string startTimeWrite)
+        private async void ExecuteCaseNameAsync(ExportTarget item, string startTime, string endTime, string startTimeWrite)
         {
             try
             {
@@ -54,12 +78,11 @@ namespace HoursExportListener
                         tasks.Add(ProcessIntercept(interceptNameObject, startTime, endTime, startTimeWrite));
                 }
                 await Task.WhenAll(tasks);
-                
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ")+"[DONE] Exported " + tempListInterceptName.Count() + " intercept from case " + item.TargetName);
+                AddLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Exported " + tempListInterceptName.Count() + " intercept from case " + item.TargetName);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Unhandled error when export casename: " + item.TargetName);
+                AddLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Unhandled error when export casename: " + item.TargetName + ", error: " +ex.Message);
             }
         }
 
@@ -70,6 +93,13 @@ namespace HoursExportListener
                 ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
             });
         }
+
+        private void AddLog(string log)
+        {
+            Console.WriteLine(log);
+            listLog.Add(new Log { dateLog = DateTime.Now, log = log });
+        }
+
         private void ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
         {
             try
@@ -78,13 +108,13 @@ namespace HoursExportListener
                 if (finalExportList.Count() > 0)
                 {
                     WriteFile(finalExportList, startTimeWrite, interceptNameObject.CaseName, interceptNameObject.InterceptName);
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Exported Intercept name " + interceptNameObject.InterceptName);
+                    AddLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Exported Intercept name " + interceptNameObject.InterceptName);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message);
-                sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName,ErrorType.HourError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
+                AddLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message);
+                //sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName,ErrorType.HourError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
             }
         }
 

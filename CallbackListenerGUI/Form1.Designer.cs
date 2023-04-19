@@ -41,6 +41,7 @@
             this.txtLog.Location = new System.Drawing.Point(13, 36);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtLog.Size = new System.Drawing.Size(441, 229);
             this.txtLog.TabIndex = 0;
             // 

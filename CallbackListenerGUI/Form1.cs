@@ -38,9 +38,36 @@ namespace CallbackListenerGUI
             hub.On<string>("acknowledgeMessage", (message) =>
             {
                 //Console.WriteLine(DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") + "[INFO] Received callback export - " + message);
-                txtLog.Text += Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") + "[INFO] Received callback export - " + message;
+                txtLog.Invoke(new Action(() =>
+                {
+                    txtLog.Text += Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") + "[INFO] Received callback export - " + message;
+                }));
+
+                try
+                {
+                    var fileDirectory = @"C:\Logs\Callback\";
+                    string path = fileDirectory + DateTime.Now.ToString("yyyyMMdd");
+                    Directory.CreateDirectory(path);
+                    var fullPath = path + @"\callback.txt";
+                    //var listItem = listLog.OrderBy(m => m.dateLog).ToList();
+                    using (StreamWriter sw = (File.Exists(fullPath)) ? File.AppendText(fullPath) : File.CreateText(fullPath))
+                    {
+                        //foreach (var line in listItem)
+                        //{
+                            sw.WriteLine(Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy HH:mm: ") + "[INFO] Received callback export - " + message);
+                        //}
+                    }
+                }
+                catch
+                {
+                    txtLog.Invoke(new Action(() => {
+                        txtLog.Text += Environment.NewLine + "Cannot write log file;";
+                    }));
+                }
+
                 ExportData(message);
-                txtLog.Text += Environment.NewLine + "Waiting for new export command...";
+                
+                
             });
             //Console.WriteLine("Waiting for new export command...");
             //Console.ReadKey();
@@ -70,20 +97,20 @@ namespace CallbackListenerGUI
 
                     var startTimeWrite = beginDate.ToString("yyyy-MM-dd HH-mm");
                     var tempTarget = new ExportObject { InterceptId = interceptid, InterceptName = interceptname, CaseName = casename };
-                    if(interceptid == "0" && interceptname == "All")
+                    if(interceptid == "0" && interceptname.ToUpper() == "ALL")
                     {
                         var tempExportTarget = new ExportTarget { Active = true, TargetName = casename };
                         var tempListInterceptName = mainHelper.GetListInterceptName(tempExportTarget);
                         List<Task> tasks = new List<Task>();
                         foreach (var interceptNameObject in tempListInterceptName)
                         {
-                            tasks.Add(ProcessIntercept(interceptNameObject, tempBegin, tempEnd, startTimeWrite));
+                            tasks.Add(ProcessIntercept(interceptNameObject, tempBegin, tempEnd, startTimeWrite,true));
                         }
                         await Task.WhenAll(tasks);
                     }
                     else
                     {
-                        ExecuteInterceptName(tempTarget, tempBegin, tempEnd, startTimeWrite);
+                        ExecuteInterceptName(tempTarget, tempBegin, tempEnd, startTimeWrite,false);
                     }
                     
                 }
@@ -99,15 +126,15 @@ namespace CallbackListenerGUI
         }
 
       
-        private Task ProcessIntercept(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
+        private Task ProcessIntercept(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite, bool isAll)
         {
             return Task.Run(() =>
             {
-                ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
+                ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite,isAll);
             });
         }
 
-        private void ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
+        private void ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite, bool isAll)
         {
             try
             {
@@ -115,7 +142,7 @@ namespace CallbackListenerGUI
                 var finalExportList = mainHelper.ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite, ReExportType.Callback.ToString());
                 if (finalExportList.Count() > 0)
                 {
-                    WriteCallBackFile(finalExportList, startTimeWrite, interceptNameObject.CaseName, interceptNameObject.InterceptName);
+                    WriteCallBackFile(finalExportList, startTimeWrite, interceptNameObject.CaseName, interceptNameObject.InterceptName,isAll);
                     txtLog.Invoke(new Action(() =>
                     {
                         txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Exported Intercept name " + interceptNameObject.InterceptName;
@@ -137,7 +164,7 @@ namespace CallbackListenerGUI
             }
         }
 
-        private static void WriteCallBackFile(List<ExportObject> listExport, string startTime, string casename, string interceptname)
+        private static void WriteCallBackFile(List<ExportObject> listExport, string startTime, string casename, string interceptname, bool isAll)
         {
             Utility utility = new Utility();
             var convertedInterceptName = "";
@@ -151,7 +178,15 @@ namespace CallbackListenerGUI
                 convertedInterceptName = interceptname;
             }
             string initialData = "[";
-            var destinationPath = StaticKey.EXPORT_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
+            string destinationPath = "";
+            if(isAll) { 
+                destinationPath = StaticKey.EXPORT_FOLDER + @"\AP_" + casename + "_Callback_ALL" + "_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName + "_" + startTime;
+            }
+            else
+            {
+                destinationPath = StaticKey.EXPORT_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
+            }
+            //var 
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";
             Directory.CreateDirectory(destinationPath);
             foreach (var itemExport in listExport)

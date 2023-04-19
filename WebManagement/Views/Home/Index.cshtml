@@ -15,31 +15,33 @@
 
     <!-- panel body -->
     <div class="panel-body">
-       
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="selectCase" class="form-label">Select Case name</label>
 
-                    @Html.DropDownList("dropdownCase", ViewBag.AllCase as SelectList, new { @class = "form-control" })
-                </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="selectCase" class="form-label">Select Case name</label>
 
+                @Html.DropDownList("dropdownCase", ViewBag.AllCase as SelectList, new { @class = "form-control" })
             </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="btnAddTarget" class="form-label label-casename" style="display : block;">Add target</label>
-                    <button type="button" id="btnAddTarget" class="btn btn-green btn-icon">
-                        Add Target
-                        <i class="entypo-check"></i>
-                    </button>
-                </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="btnAddTarget" class="form-label label-casename" style="display : block;">Add target</label>
+                <button type="button" id="btnAddTarget" class="btn btn-green btn-icon">
+                    Add Target
+                    <i class="entypo-check"></i>
+                </button>
             </div>
-       
+        </div>
+
     </div>
 
 </div>
 
 <p><b style="font-size : 18px;">Monitoring target</b><span class="pull-right" style="font-size: 14px;">Total targets: <span class="total-target">20</span></span></p>
-
+@*@{
+    var tempModel = Model.OrderBy(m => m.TargetName).ToList();
+}*@
 <table class="table table-bordered table-target responsive">
     <thead>
         <tr>
@@ -50,8 +52,8 @@
         </tr>
     </thead>
     <tbody>
-            @foreach (var item in Model)
-            {
+        @foreach (var item in Model)
+        {
             <tr role="row">
                 <td class="caseId" id="@item.TargetId">@item.TargetId</td>
                 <td class="casename">@item.TargetName</td>
@@ -62,9 +64,9 @@
                         <i class="entypo-down"></i>
                     </button>
                     @*<a href="javascript:;" class="btn btn-danger btn-sm btn-icon btn-delete icon-left">
-                        <i class="entypo-cancel"></i>
-                        Delete
-                    </a>*@
+                            <i class="entypo-cancel"></i>
+                            Delete
+                        </a>*@
                     <button type="button" class="btn btn-red btn-delete btn-icon">
                         Delete
                         <i class="entypo-cancel"></i>
@@ -72,7 +74,7 @@
                 </td>
             </tr>
         }
-        </tbody>
+    </tbody>
 </table>
 
 <div class="alert alert-success alert-success-target"><strong>Well done!</strong> Successfully deleted target.</div>

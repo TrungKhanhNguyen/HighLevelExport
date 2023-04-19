@@ -12,6 +12,7 @@ namespace ConnectionHelper.Helper
     {
         public ExportHistoryEntities db = new ExportHistoryEntities();
 
+
         public List<HotNumber> GetAllHotNumber()
         {
             try
@@ -43,12 +44,13 @@ namespace ConnectionHelper.Helper
             catch { return false; }
         }
 
-        public bool UpdateHotNumber(string casename, string interceptname, bool isActive)
+        public bool UpdateHotNumber(string casename, string interceptid, int id)
         {
             try
             {
-                var tempTarget = db.HotNumbers.Where(m=>m.CaseName == casename && m.PhoneNumber == interceptname).FirstOrDefault();
-                tempTarget.Active = isActive;
+                var tempTarget = db.HotNumbers.Where(m=>m.Id == id).FirstOrDefault();
+                tempTarget.CaseName = casename;
+                tempTarget.InterceptId = interceptid;
                 db.HotNumbers.AddOrUpdate(tempTarget);
                 db.SaveChanges();
                 return true;

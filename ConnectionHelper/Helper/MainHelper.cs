@@ -42,6 +42,33 @@ namespace ConnectionHelper.Helper
             return listObj;
         }
 
+        public List<ExportObject> GetListIntercept2MinsName(ExportTarget item)
+        {
+            var tempList = new List<ExportObject>();
+            string connectionString = helper.getConnectionString();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                using (MySqlCommand cmd = helper.getSingleIntellegoCaseAndId2Mins(connection, item))
+                {
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            var tempObj = new ExportObject
+                            {
+                                CaseName = rdr.GetString(3),
+                                InterceptName = rdr.GetString(1),
+                                InterceptId = rdr.GetString(2),
+                            };
+                            tempList.Add(tempObj);
+                        }
+                    }
+                }
+            }
+            return tempList;
+        }
+
         //Lấy danh sách các Intercept theo Case name
         public List<ExportObject> GetListInterceptName(ExportTarget item)
         {
@@ -86,15 +113,6 @@ namespace ConnectionHelper.Helper
         {
             var tempList = new List<ExportObject>();
             string connectionString = helper.getConnectionString();
-            //var tempObj = new ExportObject
-            //{
-            //    CaseName = "",
-            //    InterceptName = "84978601077",
-            //    InterceptId = "6735",
-            //    start_date = Convert.ToDateTime("2022-11-02 17:00:01"),
-            //    expiration_date = Convert.ToDateTime("2023-02-01 08:11:00"),
-            //};
-            //tempList.Add(tempObj);
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
@@ -288,8 +306,6 @@ namespace ConnectionHelper.Helper
         //Export thông tin theo từng Intercept
         public List<ExportObject> ExecuteInterceptName(ExportObject interceptNameObject, string startTime, string endTime,string writeTime, string type)
         {
-            //if (interceptNameObject.InterceptId == "3163")
-            //{
                 string connectionString = helper.getConnectionString();
                 var finalList = new List<ExportObject>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -312,19 +328,24 @@ namespace ConnectionHelper.Helper
                 foreach (var itemHit in searchResult.Hits)
                 {
                     var eventDate = itemHit.Fields["eventDate"].As<DateTime[]>().First();
-                    var tempObj = new ExportObject
-                    {
-                        CaseName = interceptNameObject.CaseName,
-                        InterceptName = interceptNameObject.InterceptName,
-                        InterceptId = interceptNameObject.InterceptId,
-                        elasticId = itemHit.Id,
-                        eventDate = eventDate.AddHours(7)
-                    };
-                    tempListExportElasticObject.Add(tempObj);
-                }
+                    //if (itemHit.Id == "128484161")
+                    //{
+                        var tempObj = new ExportObject
+                        {
+                            CaseName = interceptNameObject.CaseName,
+                            InterceptName = interceptNameObject.InterceptName,
+                            InterceptId = interceptNameObject.InterceptId,
+                            elasticId = itemHit.Id,
+                            eventDate = eventDate.AddHours(7)
+                        };
+                        tempListExportElasticObject.Add(tempObj);
+                    //}
+
+            }
 
                 if (tempListExportElasticObject.Count() > 0)
                 {
+                    
                     /****Phần truy vấn MySQL theo type****/
                     var listId = new List<string>();
 
@@ -511,6 +532,97 @@ namespace ConnectionHelper.Helper
                         }
                     }
 
+                    var listLostHI2 = tempListExportElasticObject.Except(tempListExportInterceptInfo).ToList();
+                    using (MySqlCommand cmdLost = helper.getLostHI2Info(connection, listLostHI2))
+                    {
+                        using (MySqlDataReader readerLost = cmdLost.ExecuteReader())
+                        {
+                            while (readerLost.Read())
+                            {
+                                if (readerLost.HasRows)
+                                {
+                                    int directionIndex = readerLost.GetOrdinal("direction");
+                                    int urlIndex = readerLost.GetOrdinal("url");
+                                    //int metadataIndex = tempRdr.GetOrdinal("metadata");
+
+                                    //int imeiIndex = readerLost.GetOrdinal("imei");
+
+                                    int imsiIndex = 0;
+                                    int imeiIndex = 0;
+                                    try
+                                    {
+                                        imsiIndex = readerLost.GetOrdinal("imsi");
+                                        imeiIndex = readerLost.GetOrdinal("imei");
+                                    }
+                                    catch
+                                    {
+
+                                    }
+                                    
+
+                                    int callerIndex = readerLost.GetOrdinal("caller");
+                                    int calleeIndex = readerLost.GetOrdinal("callee");
+
+                                    int startTimeIndex = readerLost.GetOrdinal("startTime");
+                                    int endTimeIndex = readerLost.GetOrdinal("endTime");
+
+                                    int conversationDurationIndex = readerLost.GetOrdinal("conversationDuration");
+
+                                    var calldirection = readerLost.IsDBNull(directionIndex) ? string.Empty : readerLost.GetString(directionIndex);
+                                    var imei = (imeiIndex == 0) ? string.Empty : readerLost.GetString(imeiIndex);
+                                    var imsi = (imsiIndex == 0 )? string.Empty : readerLost.GetString(imsiIndex);
+                                    var url = readerLost.IsDBNull(urlIndex) ? string.Empty : readerLost.GetString(urlIndex);
+
+                                    var caller = readerLost.IsDBNull(callerIndex) ? string.Empty : readerLost.GetString(callerIndex);
+                                    var callee = readerLost.IsDBNull(calleeIndex) ? string.Empty : readerLost.GetString(calleeIndex);
+
+                                    var tempstartTime = readerLost.GetDateTime(startTimeIndex);
+                                    var conversationDuration = readerLost.IsDBNull(conversationDurationIndex) ? string.Empty : readerLost.GetString(conversationDurationIndex);
+
+
+
+                                    var docid = readerLost.GetString(0);
+                                    var doctype = readerLost.GetString(1);
+                                    var callType = readerLost.GetString(6);
+
+                                    var tempItem = tempListExportElasticObject.Where(m => m.elasticId == docid).FirstOrDefault();
+                                    tempItem.document_type = doctype;
+                                    //tempItem.document_metadata = metadata;
+                                    tempItem.document_id = docid;
+                                    tempItem.call_direction = calldirection;
+                                    tempItem.call_participant_imei = imei;
+                                    tempItem.call_participant_imsi = imsi;
+                                    tempItem.call_product_url = url;
+                                    tempItem.call_type = callType;
+                                    tempItem.call_caller = caller;
+                                    tempItem.call_callee = callee;
+
+                                    tempItem.call_startTime = tempstartTime.AddHours(7);
+
+                                    tempItem.call_conversationDuration = conversationDuration;
+                                    tempItem.listCGI = new List<Call_Location_Object>();
+
+                                    //var tempendTimeString = callRdr.GetDateTime(endTimeIndex);
+                                    if (!readerLost.IsDBNull(endTimeIndex))
+                                    {
+                                        tempItem.call_endTime = readerLost.GetDateTime(endTimeIndex).AddHours(7);
+                                    }
+                                    else
+                                    {
+                                        if (type != ReExportType.Backup.ToString())
+                                            sqlServerHelper.InsertToReExport(tempItem.CaseName, tempItem.InterceptName, tempItem.InterceptId, tempItem.elasticId, tempItem.eventDate, type, writeTime);
+                                    }
+
+                                    tempListExportInterceptInfo.Add(tempItem);
+
+                                    tempListCall.Add(tempItem);
+
+                                    listId.Add(tempItem.elasticId);
+                                }
+                            }
+                        }
+                    }
+
                     var listSMSAndCallItem = tempListExportInterceptInfo.Where(m => m.document_type == "6").ToList();
 
                     if (listSMSAndCallItem.Count > 0)
@@ -544,22 +656,58 @@ namespace ConnectionHelper.Helper
                             }
                         }
                     }
-
-
                     //Phần truy vấn BSA
                     try
-                    {
-                        string BSAConnectionString = helper.getBSAConnectionString();
-                        using (MySqlConnection connection2 = new MySqlConnection(BSAConnectionString))
                         {
-                            connection2.Open();
-                            if (type == ReExportType.Backup.ToString())
+                            string BSAConnectionString = helper.getBSAConnectionString();
+                            using (MySqlConnection connection2 = new MySqlConnection(BSAConnectionString))
                             {
-                                foreach(var itemExport in tempListExportInterceptInfo)
+                                connection2.Open();
+                                if (type == ReExportType.Backup.ToString())
                                 {
-                                    using (MySqlCommand cmd4 = helper.getSingleCellTowerByCellId(connection2, itemExport))
+                                    foreach (var itemExport in tempListExportInterceptInfo)
                                     {
-                                        using (MySqlDataReader reader = cmd4.ExecuteReader())
+                                        using (MySqlCommand cmd4 = helper.getSingleCellTowerByCellId(connection2, itemExport))
+                                        {
+                                            using (MySqlDataReader reader = cmd4.ExecuteReader())
+                                            {
+                                                while (reader.Read())
+                                                {
+                                                    if (reader.HasRows)
+                                                    {
+                                                        var cellid = reader.GetString(0);
+                                                        var address = reader.GetString(1);
+                                                        var latlong = reader.GetString(2);
+
+                                                        if (itemExport.document_type == "19")
+                                                        {
+                                                            if (itemExport.celltower_cellid == cellid)
+                                                            {
+                                                                itemExport.celltower_address = address;
+                                                                itemExport.celltower_latlong = latlong;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            var tempListCGI = itemExport.listCGI.Where(m => m.value == cellid).ToList();
+                                                            if (tempListCGI.Count() > 0)
+                                                            {
+                                                                tempListCGI[0].address = address;
+                                                                tempListCGI[0].latlon = latlong;
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    using (MySqlCommand cmd3 = helper.getCellTowerByCellId(connection2, tempListExportInterceptInfo))
+                                    {
+                                        using (MySqlDataReader reader = cmd3.ExecuteReader())
                                         {
                                             while (reader.Read())
                                             {
@@ -568,73 +716,35 @@ namespace ConnectionHelper.Helper
                                                     var cellid = reader.GetString(0);
                                                     var address = reader.GetString(1);
                                                     var latlong = reader.GetString(2);
-                                                   
-                                                    if (itemExport.document_type == "19")
+                                                    foreach (var itemFinal in tempListExportInterceptInfo)
                                                     {
-                                                        if (itemExport.celltower_cellid == cellid)
+                                                        if (itemFinal.document_type == "19")
                                                         {
-                                                            itemExport.celltower_address = address;
-                                                            itemExport.celltower_latlong = latlong;
+                                                            if (itemFinal.celltower_cellid == cellid)
+                                                            {
+                                                                itemFinal.celltower_address = address;
+                                                                itemFinal.celltower_latlong = latlong;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            var tempListCGI = itemFinal.listCGI.Where(m => m.value == cellid).ToList();
+                                                            if (tempListCGI.Count() > 0)
+                                                            {
+                                                                tempListCGI[0].address = address;
+                                                                tempListCGI[0].latlon = latlong;
+                                                            }
                                                         }
                                                     }
-                                                    else
-                                                    {
-                                                        var tempListCGI = itemExport.listCGI.Where(m => m.value == cellid).ToList();
-                                                        if (tempListCGI.Count() > 0)
-                                                        {
-                                                            tempListCGI[0].address = address;
-                                                            tempListCGI[0].latlon = latlong;
-                                                        }
-                                                    }
-                                                    
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                using (MySqlCommand cmd3 = helper.getCellTowerByCellId(connection2, tempListExportInterceptInfo))
-                                {
-                                    using (MySqlDataReader reader = cmd3.ExecuteReader())
-                                    {
-                                        while (reader.Read())
-                                        {
-                                            if (reader.HasRows)
-                                            {
-                                                var cellid = reader.GetString(0);
-                                                var address = reader.GetString(1);
-                                                var latlong = reader.GetString(2);
-                                                foreach (var itemFinal in tempListExportInterceptInfo)
-                                                {
-                                                    if (itemFinal.document_type == "19")
-                                                    {
-                                                        if (itemFinal.celltower_cellid == cellid)
-                                                        {
-                                                            itemFinal.celltower_address = address;
-                                                            itemFinal.celltower_latlong = latlong;
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        var tempListCGI = itemFinal.listCGI.Where(m => m.value == cellid).ToList();
-                                                        if (tempListCGI.Count() > 0)
-                                                        {
-                                                            tempListCGI[0].address = address;
-                                                            tempListCGI[0].latlon = latlong;
-                                                        }
-                                                    }
-                                                }
 
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    catch { }
+                        catch { }
                 }
                 finalList = tempListExportInterceptInfo.OrderBy(m => m.eventDate).ToList();
             }

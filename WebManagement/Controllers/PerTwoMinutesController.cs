@@ -24,7 +24,9 @@ namespace WebManagement.Controllers
                 //sqlserverHelper.InsertLogToDB("Error export 4", DateTime.Now.AddHours(-2), "X01", ErrorType.MinuteError.ToString(), "789", "843333333");
 
                 //var sds = System.Web.HttpContext.Current.User.Identity.Name;
-                var listNumber = sqlserverHelper.GetAllHotNumber();
+                var temp = sqlserverHelper.GetAllHotNumber();
+                var selectedCaseId = temp[0].InterceptId;
+                var currentId = temp[0].Id;
 
                 var listCase = mainHelper.GetListCaseObject().OrderBy(m=>m.name).ToList();
                 //var listCase = new List<CaseObject>();
@@ -44,10 +46,12 @@ namespace WebManagement.Controllers
                 //listIntercept.Add(new ExportObject { InterceptId = "987", InterceptName = "Microsoft JSC" });
 
                 ViewBag.AllCase = new SelectList(listCase, "id", "name");
+                ViewBag.SelectedCaseId = selectedCaseId;
+                ViewBag.CurrentId = currentId;
 
-                ViewBag.AllIntercept = new SelectList(listIntercept, "InterceptId", "InterceptName");
+                //ViewBag.AllIntercept = new SelectList(listIntercept, "InterceptId", "InterceptName");
 
-                return View(listNumber);
+                return View();
             }
             else
             {
@@ -65,24 +69,6 @@ namespace WebManagement.Controllers
             tempList = mainHelper.GetListInterceptName(tempTarget).OrderBy(m=>m.InterceptName).ToList();
             tempList.Insert(0, new ExportObject { InterceptId = "0", InterceptName = "All" });
 
-            //switch (casename)
-            //{
-            //    case "C02":
-            //        tempList.Add(new ExportObject { InterceptId = "444", InterceptName = "techcombank" });
-            //        tempList.Add(new ExportObject { InterceptId = "555", InterceptName = "vietcombank" });
-            //        tempList.Add(new ExportObject { InterceptId = "666", InterceptName = "vietinbank" });
-            //        break;
-            //    case "C03":
-            //        tempList.Add(new ExportObject { InterceptId = "135", InterceptName = "cocacola" });
-            //        tempList.Add(new ExportObject { InterceptId = "357", InterceptName = "pepsi" });
-            //        tempList.Add(new ExportObject { InterceptId = "579", InterceptName = "lavie" });
-            //        break;
-            //    case "C04":
-            //        tempList.Add(new ExportObject { InterceptId = "246", InterceptName = "dog" });
-            //        tempList.Add(new ExportObject { InterceptId = "468", InterceptName = "cat" });
-            //        tempList.Add(new ExportObject { InterceptId = "680", InterceptName = "tiger" });
-            //        break;
-            //}
             return Json(tempList, JsonRequestBehavior.AllowGet);
         }
 
@@ -96,7 +82,7 @@ namespace WebManagement.Controllers
         [HttpPost]
         public ActionResult Update(HotNumber number)
         {
-            var response = sqlserverHelper.UpdateHotNumber(number.CaseName, number.PhoneNumber, Convert.ToBoolean(number.Active));
+            var response = sqlserverHelper.UpdateHotNumber(number.CaseName, number.InterceptId, number.Id);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
