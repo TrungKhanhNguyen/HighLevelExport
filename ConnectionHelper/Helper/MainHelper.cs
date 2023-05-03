@@ -656,8 +656,11 @@ namespace ConnectionHelper.Helper
                             }
                         }
                     }
-                    //Phần truy vấn BSA
-                    try
+
+                    if(type != ReExportType.Backup.ToString())
+                    {
+                        //Phần truy vấn BSA
+                        try
                         {
                             string BSAConnectionString = helper.getBSAConnectionString();
                             using (MySqlConnection connection2 = new MySqlConnection(BSAConnectionString))
@@ -745,6 +748,8 @@ namespace ConnectionHelper.Helper
                             }
                         }
                         catch { }
+                    }
+                    
                 }
                 finalList = tempListExportInterceptInfo.OrderBy(m => m.eventDate).ToList();
             }

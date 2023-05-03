@@ -140,7 +140,7 @@ namespace MinutesExportGUI
                 convertedInterceptName = interceptname;
             }
             string initialData = "[";
-            var destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_2MINS_" + convertedInterceptName + "_" + startTime;
+            var destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_2MINS_" + startTime;
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";
             Directory.CreateDirectory(destinationPath);
             foreach (var itemExport in listExport)

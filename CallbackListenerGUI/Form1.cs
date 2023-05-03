@@ -95,7 +95,7 @@ namespace CallbackListenerGUI
                     var tempBegin = beginDate.AddHours(-7).ToString("yyyy-MM-ddTHH:mm:00Z");
                     var tempEnd = endDate.AddHours(-7).ToString("yyyy-MM-ddTHH:mm:00Z");
 
-                    var startTimeWrite = beginDate.ToString("yyyy-MM-dd HH-mm");
+                    var startTimeWrite = endDate.ToString("yyyy-MM-dd HH-mm");
                     var tempTarget = new ExportObject { InterceptId = interceptid, InterceptName = interceptname, CaseName = casename };
                     if(interceptid == "0" && interceptname.ToUpper() == "ALL")
                     {
@@ -180,11 +180,11 @@ namespace CallbackListenerGUI
             string initialData = "[";
             string destinationPath = "";
             if(isAll) { 
-                destinationPath = StaticKey.EXPORT_FOLDER + @"\AP_" + casename + "_Callback_ALL" + "_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName + "_" + startTime;
+                destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_Callback_ALL" + "_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName + "_" + startTime;
             }
             else
             {
-                destinationPath = StaticKey.EXPORT_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
+                destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
             }
             //var 
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";

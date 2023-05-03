@@ -247,7 +247,7 @@ namespace ConnectionHelper.Helper
 
         public MySqlCommand getListBackupIntercept(MySqlConnection connection)
         {
-            var sql = "select intercept.id, intercept.name, dateCreated, expiration_date from intercept where intercept.suspendedTime!='' and intercept.group=3;";
+            var sql = "select intercept.id, intercept.name, dateCreated, expiration_date from intercept where intercept.suspendedTime!='';";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }

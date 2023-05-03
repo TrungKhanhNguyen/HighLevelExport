@@ -39,7 +39,11 @@ namespace HoursExportListener
             foreach (var item in listTarget)
             {
                  //taskCase.Add(ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite));
-                ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
+                // if(item.TargetName == "DIENBIEN")
+                //{
+                    ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
+                //}
+                
             }
             //await Task.WhenAll(taskCase);
 
@@ -65,7 +69,7 @@ namespace HoursExportListener
             //Console.ReadLine();
         }
 
-        private async void ExecuteCaseNameAsync(ExportTarget item, string startTime, string endTime, string startTimeWrite)
+        private void ExecuteCaseNameAsync(ExportTarget item, string startTime, string endTime, string startTimeWrite)
         {
             try
             {
@@ -75,9 +79,10 @@ namespace HoursExportListener
                 {
                     //if(interceptNameObject.InterceptName == "84778542863")
                     //{
-                        tasks.Add(ProcessIntercept(interceptNameObject, startTime, endTime, startTimeWrite));
+                    //tasks.Add(ProcessIntercept(interceptNameObject, startTime, endTime, startTimeWrite));
+                    ExecuteInterceptName(interceptNameObject, startTime, endTime, startTimeWrite);
                 }
-                await Task.WhenAll(tasks);
+                //await Task.WhenAll(tasks);
                 AddLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Exported " + tempListInterceptName.Count() + " intercept from case " + item.TargetName);
             }
             catch (Exception ex)
