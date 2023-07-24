@@ -17,7 +17,7 @@ namespace ConnectionHelper.Helper
         {
             try
             {
-                var listAllNumbers = db.HotNumbers.Where(m=>m.Active == true).ToList();
+                var listAllNumbers = db.HotNumbers.Where(m => m.Active == true).ToList();
                 return listAllNumbers;
             }
             catch { return new List<HotNumber>(); }
@@ -48,7 +48,7 @@ namespace ConnectionHelper.Helper
         {
             try
             {
-                var tempTarget = db.HotNumbers.Where(m=>m.Id == id).FirstOrDefault();
+                var tempTarget = db.HotNumbers.Where(m => m.Id == id).FirstOrDefault();
                 tempTarget.CaseName = casename;
                 tempTarget.InterceptId = interceptid;
                 db.HotNumbers.AddOrUpdate(tempTarget);
@@ -118,7 +118,7 @@ namespace ConnectionHelper.Helper
         {
             try
             {
-                var listAllTarget = db.ExportTargets.Where(m=>m.Active == true).ToList();
+                var listAllTarget = db.ExportTargets.Where(m => m.Active == true).ToList();
                 return listAllTarget;
             }
             catch { return new List<ExportTarget>(); }
@@ -133,11 +133,11 @@ namespace ConnectionHelper.Helper
 
             var tempToDate = DateTime.ParseExact(toDate, "dd-MM-yyyy H:mm",
                                     System.Globalization.CultureInfo.InvariantCulture);
-            listExport = db.ExportLogs.Where(m=>m.ExportTime >= tempFromDate && m.ExportTime <=tempToDate).ToList();
+            listExport = db.ExportLogs.Where(m => m.ExportTime >= tempFromDate && m.ExportTime <= tempToDate).ToList();
             return listExport;
         }
 
-        public void InsertLogToDB(string message, DateTime exportTime, string casename,string logType, string interceptId, string interceptName)
+        public void InsertLogToDB(string message, DateTime exportTime, string casename, string logType, string interceptId, string interceptName)
         {
             var log = new ExportLog
             {
@@ -152,7 +152,7 @@ namespace ConnectionHelper.Helper
             db.SaveChanges();
         }
 
-        public void InsertHI3ToRetrieve(string source, string destination )
+        public void InsertHI3ToRetrieve(string source, string destination)
         {
             var hi3 = new HI3Retrieve { DestinationPath = destination, SourcePath = source };
             db.HI3Retrieve.Add(hi3);
@@ -175,7 +175,7 @@ namespace ConnectionHelper.Helper
         {
             var checkitem = db.CallReExports.Where(m => m.Casename == casename && m.InterceptName == interceptname && m.ElasticId == elasticid && m.InterceptId == interceptid &&
             m.EventDate == eventDate && m.Type == type && m.WriteTime == writeTime).FirstOrDefault();
-            if(checkitem != null)
+            if (checkitem != null)
             {
                 var item = new CallReExport
                 {
@@ -202,7 +202,7 @@ namespace ConnectionHelper.Helper
         public void DeleteCallReExport(int id)
         {
             var tempItem = db.CallReExports.Where(m => m.Id == id).FirstOrDefault();
-            if(tempItem != null)
+            if (tempItem != null)
             {
                 db.CallReExports.Remove(tempItem);
                 db.SaveChanges();

@@ -1,6 +1,4 @@
-﻿using ConnectionHelper.Helper;
-using ConnectionHelper.Models;
-using Quartz;
+﻿using Quartz;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,12 +11,25 @@ namespace HI3CopyListener
 {
     public class MainJob : IJob
     {
-        private SQLServerHelper sqlServerHelper = new SQLServerHelper();
+        //private SQLServerHelper sqlServerHelper = new SQLServerHelper();
+        public ExportHistoryEntities exportEntity = new ExportHistoryEntities();
+        public List<HI3Retrieve> GetListHI3Retrieve()
+        {
+            var tempList = exportEntity.HI3Retrieve.ToList();
+            return tempList;
+        }
+
+        public void DeleteHI3Range(List<HI3Retrieve> listData)
+        {
+            exportEntity.HI3Retrieve.RemoveRange(listData);
+            exportEntity.SaveChanges();
+        }
+
         public void RetrieveData()
         {
             try
             {
-                var listData = sqlServerHelper.GetListHI3Retrieve();
+                var listData = GetListHI3Retrieve();
                 var listDelete = new List<HI3Retrieve>();
                 if(listData.Count() > 0)
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[INFO] Starting new copy session... ");
@@ -41,7 +52,7 @@ namespace HI3CopyListener
                 }
                 if(listDelete.Count() > 0)
                 {
-                    sqlServerHelper.DeleteHI3Range(listDelete);
+                    DeleteHI3Range(listDelete);
                 }
             }
             catch (Exception ex)

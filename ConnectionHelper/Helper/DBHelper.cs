@@ -42,16 +42,16 @@ namespace ConnectionHelper.Helper
             return cmd;
         }
 
-        public MySqlCommand getSingleIntellegoCaseAndId(MySqlConnection connection, ExportTarget target)
+        public MySqlCommand getSingleIntellegoCaseAndId(MySqlConnection connection, string casename)
         {
-            string sql = "select b.name as CaseName, a.name as InterceptName, a.id as InterceptId from intellego.intercept a, intellego.case b, intellego.case_intercept c where b.name = '" + target.TargetName + "' and b.id = c.case  and c.intercept = a.id order by a.id";
+            string sql = "select b.name as CaseName, a.name as InterceptName, a.id as InterceptId from intellego.intercept a, intellego.case b, intellego.case_intercept c where b.name = '" + casename + "' and b.id = c.case  and c.intercept = a.id order by a.id";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }
 
-        public MySqlCommand getSingleIntellegoCaseAndId2Mins(MySqlConnection connection, ExportTarget target)
+        public MySqlCommand getSingleIntellegoCaseAndId2Mins(MySqlConnection connection, string casename)
         {
-            string sql = "select b.name as CaseName, a.name as InterceptName, a.id as InterceptId, a.description as Description from intellego.intercept a, intellego.case b, intellego.case_intercept c where b.name = '" + target.TargetName + "' and b.id = c.case  and c.intercept = a.id order by a.id";
+            string sql = "select b.name as CaseName, a.name as InterceptName, a.id as InterceptId, a.description as Description from intellego.intercept a, intellego.case b, intellego.case_intercept c where b.name = '" + casename + "' and b.id = c.case  and c.intercept = a.id order by a.id";
             var cmd = new MySqlCommand(sql, connection);
             return cmd;
         }

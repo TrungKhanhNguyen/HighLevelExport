@@ -20,7 +20,8 @@ namespace MinutesExportGUI
         private List<HotNumber> listNumber = new List<HotNumber>();
         private DBHelper helper = new DBHelper();
         private MainHelper mainHelper = new MainHelper();
-        private SQLServerHelper sqlserverHelper = new SQLServerHelper();
+        //private SQLServerHelper sqlserverHelper = new SQLServerHelper();
+        private ExportHistoryEntities exportEntity = new ExportHistoryEntities();
         private Utility utility = new Utility();
         private List<Log> listLog = new List<Log>();
         public Form1()
@@ -56,7 +57,7 @@ namespace MinutesExportGUI
 
                 var tempExportTarget = new ExportTarget { Active = true, TargetId = "1", TargetName = exportCase };
 
-                var tempListInterceptName = mainHelper.GetListIntercept2MinsName(tempExportTarget);
+                var tempListInterceptName = mainHelper.GetListIntercept2MinsName(exportCase);
 
                 var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
                 var startTime = (currentTime).AddHours(-7).AddMinutes(-2).ToString("yyyy-MM-ddTHH:mm:ssZ");
@@ -188,7 +189,7 @@ namespace MinutesExportGUI
                             var destinationFullUrl = destinationPath + @"\" + fileName;
 
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when copy file, " + ex.Message);
-                            sqlserverHelper.InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
+                            InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
 
                         }
                     }
@@ -206,6 +207,13 @@ namespace MinutesExportGUI
                 }
             }
             System.IO.File.WriteAllText(hi2FullPath, initialData);
+        }
+
+        private void InsertHI3ToRetrieve(string source, string destination)
+        {
+            var hi3 = new HI3Retrieve { DestinationPath = destination, SourcePath = source };
+            exportEntity.HI3Retrieve.Add(hi3);
+            exportEntity.SaveChanges();
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -1,5 +1,6 @@
 ﻿using ConnectionHelper.Helper;
 using ConnectionHelper.Models;
+//using ConnectionHelper.Models;
 using Newtonsoft.Json;
 using Quartz;
 using System;
@@ -17,7 +18,8 @@ namespace HoursExportListener
         private DBHelper helper = new DBHelper();
         private MainHelper mainHelper = new MainHelper();
         private Utility utility = new Utility();
-        private SQLServerHelper sqlserverHelper = new SQLServerHelper();
+        //private SQLServerHelper sqlserverHelper = new SQLServerHelper();
+        private ExportHistoryEntities exportHistory = new ExportHistoryEntities();
         private List<Log> listLog = new List<Log>();
         public void Execute(IJobExecutionContext context)
         {
@@ -90,7 +92,7 @@ namespace HoursExportListener
         {
             try
             {
-                var tempListInterceptName = mainHelper.GetListInterceptName(item);
+                var tempListInterceptName = mainHelper.GetListInterceptName(item.TargetName);
                 List<Task> tasks = new List<Task>();
                 foreach (var interceptNameObject in tempListInterceptName)
                 {
@@ -138,6 +140,13 @@ namespace HoursExportListener
                 AddLog(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message);
                 //sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName,ErrorType.HourError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
             }
+        }
+
+        private void InsertHI3ToRetrieve(string source, string destination)
+        {
+            var hi3 = new HI3Retrieve { DestinationPath = destination, SourcePath = source };
+            exportHistory.HI3Retrieve.Add(hi3);
+            exportHistory.SaveChanges();
         }
 
         private void WriteFile(List<ExportObject> listExport, string startTime, string casename, string interceptname)

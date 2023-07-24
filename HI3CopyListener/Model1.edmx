@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ExportHistoryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CallReExport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Casename" Type="nvarchar" MaxLength="200" />
+          <Property Name="InterceptName" Type="nvarchar" MaxLength="200" />
+          <Property Name="InterceptId" Type="nvarchar" MaxLength="200" />
+          <Property Name="ElasticId" Type="nvarchar" MaxLength="200" />
+          <Property Name="EventDate" Type="datetime" />
+          <Property Name="WriteTime" Type="nvarchar" MaxLength="200" />
+          <Property Name="Type" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="ExportLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ExportTime" Type="datetime" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="Messages" Type="nvarchar(max)" />
+          <Property Name="CaseName" Type="nvarchar" MaxLength="200" />
+          <Property Name="LogType" Type="nvarchar" MaxLength="50" />
+          <Property Name="InterceptId" Type="nvarchar" MaxLength="200" />
+          <Property Name="InterceptName" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="ExportTarget">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TargetId" Type="nvarchar" MaxLength="200" />
+          <Property Name="TargetName" Type="nvarchar" MaxLength="200" />
+          <Property Name="Active" Type="bit" />
+        </EntityType>
+        <EntityType Name="HI3Retrieve">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SourcePath" Type="nvarchar(max)" />
+          <Property Name="DestinationPath" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="HotNumber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="CaseName" Type="nvarchar" MaxLength="200" />
+          <Property Name="InterceptId" Type="nvarchar" MaxLength="50" />
+          <Property Name="Active" Type="bit" />
+        </EntityType>
+        <EntityType Name="Login">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar" MaxLength="200" />
+          <Property Name="Active" Type="bit" />
+          <Property Name="IsAdmin" Type="bit" />
+        </EntityType>
+        <EntityContainer Name="ExportHistoryModelStoreContainer">
+          <EntitySet Name="CallReExport" EntityType="Self.CallReExport" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ExportLog" EntityType="Self.ExportLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ExportTarget" EntityType="Self.ExportTarget" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HI3Retrieve" EntityType="Self.HI3Retrieve" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HotNumber" EntityType="Self.HotNumber" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Login" EntityType="Self.Login" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ExportHistoryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CallReExport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Casename" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="InterceptName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="InterceptId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ElasticId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="EventDate" Type="DateTime" Precision="3" />
+          <Property Name="WriteTime" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ExportLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ExportTime" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Messages" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CaseName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="LogType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="InterceptId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="InterceptName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ExportTarget">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TargetId" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TargetName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="HI3Retrieve">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SourcePath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DestinationPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="HotNumber">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CaseName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="InterceptId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="Login">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" />
+          <Property Name="IsAdmin" Type="Boolean" />
+        </EntityType>
+        <EntityContainer Name="ExportHistoryEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CallReExports" EntityType="Self.CallReExport" />
+          <EntitySet Name="ExportLogs" EntityType="Self.ExportLog" />
+          <EntitySet Name="ExportTargets" EntityType="Self.ExportTarget" />
+          <EntitySet Name="HI3Retrieve" EntityType="Self.HI3Retrieve" />
+          <EntitySet Name="HotNumbers" EntityType="Self.HotNumber" />
+          <EntitySet Name="Logins" EntityType="Self.Login" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ExportHistoryModelStoreContainer" CdmEntityContainer="ExportHistoryEntities">
+          <EntitySetMapping Name="CallReExports">
+            <EntityTypeMapping TypeName="ExportHistoryModel.CallReExport">
+              <MappingFragment StoreEntitySet="CallReExport">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Casename" ColumnName="Casename" />
+                <ScalarProperty Name="InterceptName" ColumnName="InterceptName" />
+                <ScalarProperty Name="InterceptId" ColumnName="InterceptId" />
+                <ScalarProperty Name="ElasticId" ColumnName="ElasticId" />
+                <ScalarProperty Name="EventDate" ColumnName="EventDate" />
+                <ScalarProperty Name="WriteTime" ColumnName="WriteTime" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExportLogs">
+            <EntityTypeMapping TypeName="ExportHistoryModel.ExportLog">
+              <MappingFragment StoreEntitySet="ExportLog">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ExportTime" ColumnName="ExportTime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Messages" ColumnName="Messages" />
+                <ScalarProperty Name="CaseName" ColumnName="CaseName" />
+                <ScalarProperty Name="LogType" ColumnName="LogType" />
+                <ScalarProperty Name="InterceptId" ColumnName="InterceptId" />
+                <ScalarProperty Name="InterceptName" ColumnName="InterceptName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExportTargets">
+            <EntityTypeMapping TypeName="ExportHistoryModel.ExportTarget">
+              <MappingFragment StoreEntitySet="ExportTarget">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TargetId" ColumnName="TargetId" />
+                <ScalarProperty Name="TargetName" ColumnName="TargetName" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HI3Retrieve">
+            <EntityTypeMapping TypeName="ExportHistoryModel.HI3Retrieve">
+              <MappingFragment StoreEntitySet="HI3Retrieve">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SourcePath" ColumnName="SourcePath" />
+                <ScalarProperty Name="DestinationPath" ColumnName="DestinationPath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HotNumbers">
+            <EntityTypeMapping TypeName="ExportHistoryModel.HotNumber">
+              <MappingFragment StoreEntitySet="HotNumber">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="CaseName" ColumnName="CaseName" />
+                <ScalarProperty Name="InterceptId" ColumnName="InterceptId" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Logins">
+            <EntityTypeMapping TypeName="ExportHistoryModel.Login">
+              <MappingFragment StoreEntitySet="Login">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
