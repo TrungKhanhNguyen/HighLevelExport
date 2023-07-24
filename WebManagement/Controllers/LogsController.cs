@@ -19,34 +19,51 @@ namespace WebManagement.Controllers
         }
         public ActionResult Index()
         {
-            //var listNumber = sqlserverHelper.GetAllHotNumber();
 
-            ////var listCase = mainHelper.GetListCaseObject();
-            //var listCase = new List<CaseObject>();
-            //listCase.Add(new CaseObject { id = "1", name = "C02" });
-            //listCase.Add(new CaseObject { id = "2", name = "C03" });
-            //listCase.Add(new CaseObject { id = "3", name = "C04" });
-            //var listIntercept = new List<ExportObject>();
-            ////if(listCase.Count() > 0)
-            ////{
-            ////    var casename = listCase[0].name;
-            ////    var tempTarget = new ExportTarget { TargetName = casename };
-            ////    listIntercept = mainHelper.GetListInterceptName(tempTarget);
-            ////}
-            //listIntercept.Add(new ExportObject { InterceptId = "123", InterceptName = "Intercept 1" });
-            //listIntercept.Add(new ExportObject { InterceptId = "658", InterceptName = "Apple Inc" });
-            //listIntercept.Add(new ExportObject { InterceptId = "987", InterceptName = "Microsoft JSC" });
+            if (Request.IsAuthenticated)
+            {
+                //var sds = System.Web.HttpContext.Current.User.Identity.Name;
+                //var isAdminText = sds.Split('-')[1];
+                //if (!Convert.ToBoolean(isAdminText))
+                //{
+                //    return RedirectToAction("Index", "Manual");
+                //}
+               
+                //var listNumber = sqlserverHelper.GetAllHotNumber();
+                //var listNumber = sqlserverHelper.GetAllHotNumber();
 
-            //ViewBag.AllCase = new SelectList(listCase, "id", "name");
+                ////var listCase = mainHelper.GetListCaseObject();
+                //var listCase = new List<CaseObject>();
+                //listCase.Add(new CaseObject { id = "1", name = "C02" });
+                //listCase.Add(new CaseObject { id = "2", name = "C03" });
+                //listCase.Add(new CaseObject { id = "3", name = "C04" });
+                //var listIntercept = new List<ExportObject>();
+                ////if(listCase.Count() > 0)
+                ////{
+                ////    var casename = listCase[0].name;
+                ////    var tempTarget = new ExportTarget { TargetName = casename };
+                ////    listIntercept = mainHelper.GetListInterceptName(tempTarget);
+                ////}
+                //listIntercept.Add(new ExportObject { InterceptId = "123", InterceptName = "Intercept 1" });
+                //listIntercept.Add(new ExportObject { InterceptId = "658", InterceptName = "Apple Inc" });
+                //listIntercept.Add(new ExportObject { InterceptId = "987", InterceptName = "Microsoft JSC" });
 
-            //ViewBag.AllIntercept = new SelectList(listIntercept, "InterceptId", "InterceptName");
-            var listLogs = new List<ExportLog>();
-            ViewBag.BeginDate = DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy");
-            ViewBag.BeginTime = "07:00";
-            ViewBag.EndDate = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewBag.EndTime = "07:00";
+                //ViewBag.AllCase = new SelectList(listCase, "id", "name");
 
-            return View(listLogs);
+                //ViewBag.AllIntercept = new SelectList(listIntercept, "InterceptId", "InterceptName");
+                var listLogs = new List<ExportLog>();
+                ViewBag.BeginDate = DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy");
+                ViewBag.BeginTime = "07:00";
+                ViewBag.EndDate = DateTime.Now.ToString("dd-MM-yyyy");
+                ViewBag.EndTime = "07:00";
+
+                return View(listLogs);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            
             //return View();
         }
 

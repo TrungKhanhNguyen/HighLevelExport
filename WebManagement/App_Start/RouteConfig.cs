@@ -16,7 +16,7 @@ namespace WebManagement
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "PerTwoMinutes", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Manual", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

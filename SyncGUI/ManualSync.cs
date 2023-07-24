@@ -1,4 +1,5 @@
-﻿using K4os.Compression.LZ4.Internal;
+﻿using ConnectionHelper.Helper;
+using K4os.Compression.LZ4.Internal;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +18,8 @@ namespace SyncGUI
     public partial class ManualSync : Form
     {
         private static Helper helper = new Helper();
-        private static ExportHistoryEntities db = new ExportHistoryEntities();
+        private MainHelper mainhelper = new MainHelper();
+        //private static ExportHistoryEntities db = new ExportHistoryEntities();
         public ManualSync()
         {
             InitializeComponent();
@@ -110,7 +113,19 @@ namespace SyncGUI
                             }
                         }
 
-                        var listDiaPhuong = db.ExportTargets.Where(m => m.Active == true).ToList();
+                        var listCase = mainhelper.GetListCaseObject();
+
+                        string[] lines = File.ReadAllLines("configs.txt");
+                        var listDiaPhuong = new List<ExportTarget>();
+                        int i = 1;
+                        foreach(var item in lines)
+                        {
+                            var tempDiaphuong = new ExportTarget { Active = true, TargetName = item.ToString(), Id = i };
+                            var tempCase = listCase.Where(m => m.name == tempDiaphuong.TargetName).FirstOrDefault();
+                            tempDiaphuong.TargetId = tempCase.id;
+                            i++;
+                        }
+                        //var listDiaPhuong = db.ExportTargets.Where(m => m.Active == true).ToList();
 
                         foreach (var item in listObject)
                         {
@@ -205,7 +220,22 @@ namespace SyncGUI
                         }
                     }
 
-                    var listDiaPhuong = db.ExportTargets.Where(m => m.Active == true).ToList();
+                    //var listDiaPhuong = db.ExportTargets.Where(m => m.Active == true).ToList();
+
+                    var listCase = mainhelper.GetListCaseObject();
+
+                    string[] lines = File.ReadAllLines("configs.txt");
+                    var listDiaPhuong = new List<ExportTarget>();
+                    int i = 1;
+                    foreach (var item in lines)
+                    {
+                        var tempDiaphuong = new ExportTarget { Active = true, TargetName = item.ToString(), Id = i };
+                        var tempCase = listCase.Where(m => m.name == tempDiaphuong.TargetName).FirstOrDefault();
+                        tempDiaphuong.TargetId = tempCase.id;
+                        i++;
+                    }
+
+
                     var listActiveObject = listObject.Where(m => m.STATE == "ACTIVE").ToList();
                     foreach (var item in listActiveObject)
                     {

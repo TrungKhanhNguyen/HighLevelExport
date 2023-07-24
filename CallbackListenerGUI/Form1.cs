@@ -179,12 +179,16 @@ namespace CallbackListenerGUI
             }
             string initialData = "[";
             string destinationPath = "";
-            if(isAll) { 
-                destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_Callback_ALL" + "_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName + "_" + startTime;
+
+            string[] lines = File.ReadAllLines("configs.txt");
+            string exportPath = lines[0];
+
+            if (isAll) { 
+                destinationPath = exportPath + @"\AP_" + casename + "_Callback_ALL" + "_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName + "_" + startTime;
             }
             else
             {
-                destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
+                destinationPath = exportPath + @"\AP_" + casename + "_Callback_" + convertedInterceptName + "_" + startTime;
             }
             //var 
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";

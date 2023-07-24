@@ -47,6 +47,7 @@ namespace ConnectionHelper.Helper
                         case "45202": network = "Vinaphone"; break;
                         case "45204": network = "Viettel"; break;
                         case "45208": network = "Vinaphone"; break;
+                        case "45209": network = "Vinaphone"; break;
                     }
                 }
                 else
@@ -67,11 +68,13 @@ namespace ConnectionHelper.Helper
                         case "097":
                         case "098":
                             network = "Viettel"; break;
+                        case "055":
                         case "081":
                         case "082":
                         case "083":
                         case "084":
                         case "085":
+                        case "087":
                         case "088":
                         case "091":
                         case "094":

@@ -27,7 +27,7 @@ namespace HoursExportListener
         public void exportSingleData()
         {
             listLog = new List<Log>();
-            listTarget = sqlserverHelper.GetListExportTarget();
+            
 
             var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 10, 00, 00);
 
@@ -36,36 +36,53 @@ namespace HoursExportListener
 
             var startTimeWrite = currentTime.ToString("yyyy-MM-dd HH-mm");
             //List<Task> taskCase = new List<Task>();
-            foreach (var item in listTarget)
+            string[] lines = File.ReadAllLines("configs.txt");
+            if (lines.Count() > 1)
             {
-                 //taskCase.Add(ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite));
-                // if(item.TargetName == "DIENBIEN")
-                //{
-                    ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
-                //}
-                
-            }
-            //await Task.WhenAll(taskCase);
-
-            try
-            {
-                var fileDirectory = @"C:\Logs\1Hour\";
-                string path = fileDirectory + DateTime.Now.ToString("yyyyMMddHH");
-                Directory.CreateDirectory(path);
-                var fullPath = path + @"\1hour.txt";
-                var listItem = listLog.OrderBy(m => m.dateLog).ToList();
-                using (StreamWriter sw = (File.Exists(fullPath)) ? File.AppendText(fullPath) : File.CreateText(fullPath))
+                for(int i=1; i<lines.Count(); i++)
                 {
-                    foreach (var line in listItem)
+                    var tempItem = new ExportTarget { Active = true, TargetName = lines[i], Id = i };
+                    listTarget.Add(tempItem);
+                }
+
+                foreach (var item in listTarget)
+                {
+                    //taskCase.Add(ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite));
+                    // if(item.TargetName == "DIENBIEN")
+                    //{
+                    ExecuteCaseNameAsync(item, startTime, endTime, startTimeWrite);
+                    //}
+
+                }
+                //await Task.WhenAll(taskCase);
+
+                try
+                {
+                    var fileDirectory = @"C:\Logs\1Hour\";
+                    string path = fileDirectory + DateTime.Now.ToString("yyyyMMddHH");
+                    Directory.CreateDirectory(path);
+                    var fullPath = path + @"\1hour.txt";
+                    var listItem = listLog.OrderBy(m => m.dateLog).ToList();
+                    using (StreamWriter sw = (File.Exists(fullPath)) ? File.AppendText(fullPath) : File.CreateText(fullPath))
                     {
-                        sw.WriteLine(line.log);
+                        foreach (var line in listItem)
+                        {
+                            sw.WriteLine(line.log);
+                        }
                     }
                 }
+                catch
+                {
+                    AddLog(Environment.NewLine + "Cannot write log file");
+                }
             }
-            catch
+            else
             {
-                AddLog(Environment.NewLine + "Cannot write log file");
+                AddLog(Environment.NewLine + "Error!!! Check config file");
             }
+
+            
+            
             //Console.ReadLine();
         }
 
@@ -125,6 +142,9 @@ namespace HoursExportListener
 
         private void WriteFile(List<ExportObject> listExport, string startTime, string casename, string interceptname)
         {
+            string[] lines = File.ReadAllLines("configs.txt");
+            string exportPath = lines[0];
+
             var convertedInterceptName = "";
             if (interceptname.Substring(0, 2) == "84")
             {
@@ -136,7 +156,7 @@ namespace HoursExportListener
                 convertedInterceptName = interceptname;
             }
             string initialData = "[";
-            var destinationPath = StaticKey.EXPORT_FOLDER + @"\" + "AP_" + casename + "_All_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName + "_" + startTime;
+            var destinationPath = exportPath + @"\" + "AP_" + casename + "_All_" + startTime + @"\AP_" + casename + "_" + convertedInterceptName + "_" + startTime;
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";
             Directory.CreateDirectory(destinationPath);
             foreach (var itemExport in listExport)
@@ -165,7 +185,7 @@ namespace HoursExportListener
                             var destinationFullUrl = destinationPath + @"\" + fileName;
 
                             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when copy file, " + ex.Message);
-                            sqlserverHelper.InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
+                            //sqlserverHelper.InsertHI3ToRetrieve(absoluteUrl, destinationFullUrl);
 
                         }
                     }

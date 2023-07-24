@@ -41,48 +41,65 @@ namespace MinutesExportGUI
             listLog = new List<Log>();
             txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + "Start 2 minutes export session";
             //Call method
-            listNumber = sqlserverHelper.GetAllHotNumber();
+            //listNumber = sqlserverHelper.GetAllHotNumber();
 
-            var currentTarget = listNumber[0];
+            //var currentTarget = listNumber[0];
 
-            var tempExportTarget = new ExportTarget { Active = true, TargetId = currentTarget.InterceptId, TargetName = currentTarget.CaseName };
+            string[] lines = File.ReadAllLines("configs.txt");
+            
 
-            var tempListInterceptName = mainHelper.GetListIntercept2MinsName(tempExportTarget);
-
-            var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
-            var startTime = (currentTime).AddHours(-7).AddMinutes(-2).ToString("yyyy-MM-ddTHH:mm:ssZ");
-            var endTime = (currentTime).AddHours(-7).ToString("yyyy-MM-ddTHH:mm:ssZ");
-
-            var startTimeWrite = currentTime.ToString("yyyy-MM-dd HH-mm");
-
-            List<Task> tasks = new List<Task>();
-
-            foreach (var item in tempListInterceptName)
+            if(lines.Count() > 0)
             {
-                var tempTarget = new ExportObject { InterceptId = item.InterceptId, InterceptName = item.InterceptName, CaseName = item.CaseName };
-                tasks.Add(ProcessIntercept(tempTarget, startTime, endTime, startTimeWrite));
-            }
-            await Task.WhenAll(tasks);
+                //test
+               
+                string exportCase = lines[1];
 
-            try
-            {
-                var fileDirectory = @"C:\Logs\2Mins\";
-                string path = fileDirectory + DateTime.Now.ToString("yyyyMMddHH");
-                Directory.CreateDirectory(path);
-                var fullPath = path + @"\2mins.txt";
-                var listItem = listLog.OrderBy(m => m.dateLog).ToList();
-                using (StreamWriter sw = (File.Exists(fullPath)) ? File.AppendText(fullPath) : File.CreateText(fullPath))
+                var tempExportTarget = new ExportTarget { Active = true, TargetId = "1", TargetName = exportCase };
+
+                var tempListInterceptName = mainHelper.GetListIntercept2MinsName(tempExportTarget);
+
+                var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
+                var startTime = (currentTime).AddHours(-7).AddMinutes(-2).ToString("yyyy-MM-ddTHH:mm:ssZ");
+                var endTime = (currentTime).AddHours(-7).ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+                var startTimeWrite = currentTime.ToString("yyyy-MM-dd HH-mm");
+
+                List<Task> tasks = new List<Task>();
+
+                foreach (var item in tempListInterceptName)
                 {
-                    foreach (var line in listItem)
+                    var tempTarget = new ExportObject { InterceptId = item.InterceptId, InterceptName = item.InterceptName, CaseName = item.CaseName };
+                    tasks.Add(ProcessIntercept(tempTarget, startTime, endTime, startTimeWrite));
+                }
+                await Task.WhenAll(tasks);
+
+                try
+                {
+                    var fileDirectory = @"C:\Logs\2Mins\";
+                    string path = fileDirectory + DateTime.Now.ToString("yyyyMMddHH");
+                    Directory.CreateDirectory(path);
+                    var fullPath = path + @"\2mins.txt";
+                    var listItem = listLog.OrderBy(m => m.dateLog).ToList();
+                    using (StreamWriter sw = (File.Exists(fullPath)) ? File.AppendText(fullPath) : File.CreateText(fullPath))
                     {
-                        sw.WriteLine(line.log);
+                        foreach (var line in listItem)
+                        {
+                            sw.WriteLine(line.log);
+                        }
                     }
                 }
+                catch
+                {
+                    txtLog.Text += Environment.NewLine + "Cannot write log file";
+                }
             }
-            catch {
-                txtLog.Text += Environment.NewLine + "Cannot write log file";
+            else
+            {
+                txtLog.Text += Environment.NewLine + "Error!!! Check config file";
             }
-            //txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + "Stop 2 minutes export session";
+
+            
+            
 
         }
         private Task ProcessIntercept(ExportObject interceptNameObject, string startTime, string endTime, string startTimeWrite)
@@ -129,6 +146,8 @@ namespace MinutesExportGUI
 
         private void Write2MinsFile(List<ExportObject> listExport, string startTime, string casename, string interceptname)
         {
+            string[] lines = File.ReadAllLines("configs.txt");
+            string exportPath = lines[0];
             var convertedInterceptName = "";
             if (interceptname.Substring(0, 2) == "84")
             {
@@ -140,7 +159,7 @@ namespace MinutesExportGUI
                 convertedInterceptName = interceptname;
             }
             string initialData = "[";
-            var destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + casename + "_2MINS_" + startTime;
+            var destinationPath = exportPath + @"\AP_" + casename + "_2MINS_" + startTime;
             var hi2FullPath = destinationPath + @"\HI2_" + casename + "_" + interceptname + ".json";
             Directory.CreateDirectory(destinationPath);
             foreach (var itemExport in listExport)

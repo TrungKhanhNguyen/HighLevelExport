@@ -24,7 +24,7 @@ namespace WebManagement.Controllers
         {
             if (Request.IsAuthenticated)
             {
-                return RedirectToAction("Index", "PerTwoMinutes");
+                return RedirectToAction("Index", "Manual");
             }
             else
             {
@@ -43,7 +43,7 @@ namespace WebManagement.Controllers
             if (userLogin != null)
             {
                 FormsAuthentication.SetAuthCookie(userLogin.Username + "-" + userLogin.IsAdmin, false);
-                return RedirectToAction("Index", "PerTwoMinutes");
+                return RedirectToAction("Index", "Manual");
             }
             else
             {

@@ -14,7 +14,7 @@ namespace ConnectionHelper.Helper
     public class MainHelper
     {
         private DBHelper helper = new DBHelper();
-        private SQLServerHelper sqlServerHelper = new SQLServerHelper();
+        public SQLServerHelper sqlServerHelper = new SQLServerHelper();
 
         public List<CaseObject> GetListCaseObject()
         {

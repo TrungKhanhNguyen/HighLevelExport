@@ -29,7 +29,7 @@ namespace ConnectionHelper.Models
         public static string ELASTIC_LOCAL_IP = "http://localhost:9200/";
 
         public static string SIGNALR_IP = "http://172.10.2.39:8089/signalr";
-        public static string SIGNALR_LOCAL_IP = "http://192.168.1.4:8087/signalr";
+        public static string SIGNALR_LOCAL_IP = "http://192.168.1.8:8087/signalr";
     }
 
     public enum StatusInfo
