@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="configs.txt" />
+    <Content Include="HI3CopyConfig.txt" />
     <Content Include="Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model1.edmx</DependentUpon>

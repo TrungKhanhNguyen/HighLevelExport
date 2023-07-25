@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -16,7 +17,7 @@ namespace MinutesExportGUI
 {
     public partial class Form1 : Form
     {
-        private Timer timer1 = new Timer();
+        private System.Windows.Forms.Timer timer1 = new System.Windows.Forms.Timer();
         private List<HotNumber> listNumber = new List<HotNumber>();
         private DBHelper helper = new DBHelper();
         private MainHelper mainHelper = new MainHelper();
@@ -35,16 +36,12 @@ namespace MinutesExportGUI
             timer1.Interval = 120000;
             timer1.Tick += new EventHandler(timer_Tick);
             timer1.Start();
-
+            
         }
         private async void timer_Tick(object sender, EventArgs e)
         {
             listLog = new List<Log>();
             txtLog.Text += Environment.NewLine + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + "Start 2 minutes export session";
-            //Call method
-            //listNumber = sqlserverHelper.GetAllHotNumber();
-
-            //var currentTarget = listNumber[0];
 
             string[] lines = File.ReadAllLines("configs.txt");
             
@@ -126,7 +123,6 @@ namespace MinutesExportGUI
                         txtLog.Text += Environment.NewLine + log;
                     }));
                     listLog.Add(new Log { dateLog = dateLog, log = log });
-                    //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + "[DONE] Exported Intercept name " + interceptNameObject.InterceptName);
                 }
 
             }
@@ -140,8 +136,6 @@ namespace MinutesExportGUI
                     txtLog.Text += Environment.NewLine + log;
                 }));
                 listLog.Add(new Log { dateLog = dateLog, log = log });
-                //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] Error when export Intercept name " + interceptNameObject.InterceptName + " " + ex.Message);
-                //sqlserverHelper.InsertLogToDB("Error " + ex.Message, DateTime.Now, interceptNameObject.CaseName, ErrorType.MinuteError.ToString(), interceptNameObject.InterceptId, interceptNameObject.InterceptName);
             }
         }
 
@@ -211,9 +205,33 @@ namespace MinutesExportGUI
 
         private void InsertHI3ToRetrieve(string source, string destination)
         {
-            var hi3 = new HI3Retrieve { DestinationPath = destination, SourcePath = source };
-            exportEntity.HI3Retrieve.Add(hi3);
-            exportEntity.SaveChanges();
+            var log = "";
+            try
+            {
+                string[] lines = File.ReadAllLines("HI3CopyConfig.txt");
+                var tempDestination = lines[0];
+
+                string path = tempDestination + @"\2mins" + DateTime.Now.ToString("-ddMMyyyy-HHmmss") + ".txt";
+
+                TextWriter tw = new StreamWriter(path, true);
+                tw.WriteLine(source);
+                tw.WriteLine(destination);
+                tw.Close();
+
+                log = Environment.NewLine + "Added " + source + " to HI3Retrieve.";
+            }
+            catch (Exception ex) {
+                log = Environment.NewLine + "Cannot add " + source + " to HI3Retrieve!!!" + ex.Message;
+            }
+            finally
+            {
+                txtLog.Invoke(new Action(() =>
+                {
+                    txtLog.Text += log;
+                }));
+                listLog.Add(new Log { dateLog = DateTime.Now, log = log });
+            }
+            
         }
 
         private void button1_Click(object sender, EventArgs e)

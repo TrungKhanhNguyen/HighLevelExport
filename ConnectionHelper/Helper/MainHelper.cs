@@ -516,8 +516,8 @@ namespace ConnectionHelper.Helper
                                             }
                                             else
                                             {
-                                                if(type != ReExportType.Backup.ToString())
-                                                    sqlServerHelper.InsertToReExport(tempItem.CaseName, tempItem.InterceptName, tempItem.InterceptId, tempItem.elasticId, tempItem.eventDate, type, writeTime);
+                                                //if(type != ReExportType.Backup.ToString())
+                                                //    sqlServerHelper.InsertToReExport(tempItem.CaseName, tempItem.InterceptName, tempItem.InterceptId, tempItem.elasticId, tempItem.eventDate, type, writeTime);
                                             }
 
                                             tempListExportInterceptInfo.Add(tempItem);
@@ -609,8 +609,8 @@ namespace ConnectionHelper.Helper
                                     }
                                     else
                                     {
-                                        if (type != ReExportType.Backup.ToString())
-                                            sqlServerHelper.InsertToReExport(tempItem.CaseName, tempItem.InterceptName, tempItem.InterceptId, tempItem.elasticId, tempItem.eventDate, type, writeTime);
+                                        //if (type != ReExportType.Backup.ToString())
+                                        //    sqlServerHelper.InsertToReExport(tempItem.CaseName, tempItem.InterceptName, tempItem.InterceptId, tempItem.elasticId, tempItem.eventDate, type, writeTime);
                                     }
 
                                     tempListExportInterceptInfo.Add(tempItem);

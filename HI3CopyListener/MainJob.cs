@@ -11,49 +11,34 @@ namespace HI3CopyListener
 {
     public class MainJob : IJob
     {
-        //private SQLServerHelper sqlServerHelper = new SQLServerHelper();
-        public ExportHistoryEntities exportEntity = new ExportHistoryEntities();
-        public List<HI3Retrieve> GetListHI3Retrieve()
-        {
-            var tempList = exportEntity.HI3Retrieve.ToList();
-            return tempList;
-        }
-
-        public void DeleteHI3Range(List<HI3Retrieve> listData)
-        {
-            exportEntity.HI3Retrieve.RemoveRange(listData);
-            exportEntity.SaveChanges();
-        }
 
         public void RetrieveData()
         {
+            string[] lines = File.ReadAllLines("configs.txt");
+            var copyHI3folder = lines[0];
             try
             {
-                var listData = GetListHI3Retrieve();
-                var listDelete = new List<HI3Retrieve>();
-                if(listData.Count() > 0)
-                    Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[INFO] Starting new copy session... ");
-                foreach (var item in listData)
+                foreach (string file in Directory.EnumerateFiles(copyHI3folder, "*.txt"))
                 {
+                    var contents = File.ReadAllLines(file);
+                    var tempDestination = contents[1];
+                    var tempSource = contents[0];
                     try
                     {
-                        var lastindex = item.DestinationPath.LastIndexOf(@"\");
-                        var destinationFolder = item.DestinationPath.Substring(0, lastindex);
+                        var lastindex = tempDestination.LastIndexOf(@"\");
+                        var destinationFolder = tempDestination.Substring(0, lastindex);
                         Directory.CreateDirectory(destinationFolder);
+                        File.Copy(tempSource, tempDestination, true);
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[DONE] Copy from " + tempSource + " to " + tempDestination);
 
-                        File.Copy(item.SourcePath, item.DestinationPath, true);
-                        listDelete.Add(item);
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[DONE] Copy from " + item.SourcePath + " to " + item.DestinationPath);
+                        File.Delete(file);
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[ERROR] Failed when copy " + item.SourcePath + " " + ex.Message);
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm ") + "[ERROR] Failed when copy " + tempSource + " " + ex.Message);
                     }
                 }
-                if(listDelete.Count() > 0)
-                {
-                    DeleteHI3Range(listDelete);
-                }
+                
             }
             catch (Exception ex)
             {

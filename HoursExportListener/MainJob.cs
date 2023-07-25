@@ -1,6 +1,5 @@
 ﻿using ConnectionHelper.Helper;
 using ConnectionHelper.Models;
-//using ConnectionHelper.Models;
 using Newtonsoft.Json;
 using Quartz;
 using System;
@@ -18,8 +17,6 @@ namespace HoursExportListener
         private DBHelper helper = new DBHelper();
         private MainHelper mainHelper = new MainHelper();
         private Utility utility = new Utility();
-        //private SQLServerHelper sqlserverHelper = new SQLServerHelper();
-        private ExportHistoryEntities exportHistory = new ExportHistoryEntities();
         private List<Log> listLog = new List<Log>();
         public void Execute(IJobExecutionContext context)
         {
@@ -29,8 +26,6 @@ namespace HoursExportListener
         public void exportSingleData()
         {
             listLog = new List<Log>();
-            
-
             var currentTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 10, 00, 00);
 
             var startTime = (currentTime).AddHours(-8).ToString("yyyy-MM-ddTHH:mm:ssZ");
@@ -144,9 +139,29 @@ namespace HoursExportListener
 
         private void InsertHI3ToRetrieve(string source, string destination)
         {
-            var hi3 = new HI3Retrieve { DestinationPath = destination, SourcePath = source };
-            exportHistory.HI3Retrieve.Add(hi3);
-            exportHistory.SaveChanges();
+            var log = "";
+            try
+            {
+                string[] lines = File.ReadAllLines("HI3CopyConfig.txt");
+                var tempDestination = lines[0];
+
+                string path = tempDestination + @"\1h" + DateTime.Now.ToString("-ddMMyyyy-HHmmss") + ".txt";
+
+                TextWriter tw = new StreamWriter(path, true);
+                tw.WriteLine(source);
+                tw.WriteLine(destination);
+                tw.Close();
+
+                log = Environment.NewLine + "Added " + source + " to HI3Retrieve.";
+            }
+            catch (Exception ex)
+            {
+                log = Environment.NewLine + "Cannot add " + source + " to HI3Retrieve!!!" + ex.Message;
+            }
+            finally
+            {
+                AddLog(log);
+            }
         }
 
         private void WriteFile(List<ExportObject> listExport, string startTime, string casename, string interceptname)
