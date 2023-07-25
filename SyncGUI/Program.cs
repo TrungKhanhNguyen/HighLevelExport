@@ -16,7 +16,7 @@ namespace SyncGUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ManualSync());
+            Application.Run(new Form1());
         }
     }
 }
