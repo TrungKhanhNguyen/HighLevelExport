@@ -22,16 +22,41 @@ namespace CallReExportListener
             ExecuteData();
         }
 
-        public async void ExecuteData()
+        public void ExecuteData()
         {
             string connectionString = helper.getConnectionString();
-            var listItem = sqlServerhelper.GetListCallReExport();
-            List<Task> tasks = new List<Task>();
-            foreach(var item in listItem)
+            var listItem = new List<CallReExport>();
+
+            string[] lines = File.ReadAllLines("configs.txt");
+            var reexportfolder = lines[1];
+            try
             {
-                tasks.Add(ProcessItem(item));
+                foreach (string file in Directory.EnumerateFiles(reexportfolder, "*.txt"))
+                {
+                    var contents = File.ReadAllLines(file);
+                    var casename = contents[0];
+                    var elasticid = contents[1];
+                    var eventDate = contents[2];
+                    var interceptid = contents[3];
+                    var interceptname = contents[4];
+                    var type = contents[5];
+                    var writeTime = contents[6];
+                    var tempObj = new CallReExport
+                    {
+                        Casename = casename,
+                        ElasticId = elasticid,
+                        EventDate = Convert.ToDateTime(eventDate),
+                        InterceptId = interceptid,InterceptName = interceptname,Type = type, WriteTime = writeTime
+                    };
+                    GetData(tempObj);
+
+                    File.Delete(file);
+                }
             }
-            await Task.WhenAll(tasks);
+            catch (Exception ex)
+            {
+                Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[FAILED] ERROR " + ex.Message);
+            }
         }
 
 
@@ -51,7 +76,7 @@ namespace CallReExportListener
                 {
                     WriteFile(listExport, item.Type, item.WriteTime);
                     Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm: ") + "[DONE] Re-Exported intercept " + item.InterceptName + " from case " + item.Casename);
-                    sqlServerhelper.DeleteCallReExport(item.Id);
+                    //sqlServerhelper.DeleteCallReExport(item.Id);
                 }
             }
             catch (Exception ex)
@@ -73,14 +98,18 @@ namespace CallReExportListener
             string initialData = "[";
             var destinationPath = "";
             var hi2FullPath = "";
+
+            string[] lines = File.ReadAllLines("configs.txt");
+            string exportPath = lines[0];
+
             if (type == ReExportType.Hour.ToString())
             {
-                destinationPath = StaticKey.EXPORT_FOLDER + @"\" + "AP_" + item.CaseName + "_All_" + writeTime + @"\AP_" + item.CaseName + "_" + convertedInterceptName;
+                destinationPath = exportPath + @"\" + "AP_" + item.CaseName + "_All_" + writeTime + @"\AP_" + item.CaseName + "_" + convertedInterceptName;
                 hi2FullPath = destinationPath + @"\HI2_" + item.CaseName + "_" + item.InterceptName + ".json";
             }
             else
             {
-                destinationPath = StaticKey.EXPORT_2MINS_FOLDER + @"\AP_" + item.CaseName + "_2MINS_" + convertedInterceptName + "_" + writeTime;
+                destinationPath = exportPath + @"\AP_" + item.CaseName + "_2MINS_" + convertedInterceptName + "_" + writeTime;
                 hi2FullPath = destinationPath + @"\HI2_" + item.CaseName + "_" + item.InterceptName + ".json";
             }
 
